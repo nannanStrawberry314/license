@@ -5,6 +5,7 @@ package com.lemonzuo.license;
  * @create 2024-02-20 22:15
  */
 
+import cn.hutool.core.codec.Base64;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.ArrayUtil;
@@ -24,7 +25,7 @@ import java.security.Security;
 import java.security.Signature;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
-import java.util.Base64;
+// import java.util.Base64;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -77,8 +78,9 @@ public class LicenseGenerator {
         String licenseId = "LemonZuo";
         LicensePart license = new LicensePart(licenseId, codes, date);
         String licensePart = JSONUtil.toJsonStr(license);
+        System.out.println(licensePart);
         byte[] licensePartBytes = licensePart.getBytes(StandardCharsets.UTF_8);
-        String licensePartBase64 = Base64.getEncoder().encodeToString(licensePartBytes);
+        String licensePartBase64 = Base64.encode(licensePartBytes);
 
         PrivateKey privateKey = getPrivateKey();
 
@@ -88,9 +90,9 @@ public class LicenseGenerator {
         signature.update(licensePartBytes);
         byte[] signatureBytes = signature.sign();
 
-        String sigResultsBase64 = Base64.getEncoder().encodeToString(signatureBytes);
+        String sigResultsBase64 = Base64.encode(signatureBytes);
         // Combine results as needed
-        String result = licenseId + "-" + licensePartBase64 + "-" + sigResultsBase64 + "-" + Base64.getEncoder().encodeToString(cert.getEncoded());
+        String result = licenseId + "-" + licensePartBase64 + "-" + sigResultsBase64 + "-" + Base64.encode(cert.getEncoded());
         System.out.println(result);
     }
 
