@@ -4,6 +4,7 @@ package com.lemonzuo.license;
  * @author LemonZuo
  * @create 2024-02-20 22:14
  */
+import cn.hutool.core.util.StrUtil;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -20,68 +21,47 @@ import java.util.stream.Collectors;
 @NoArgsConstructor
 @AllArgsConstructor
 public class LicensePart {
-    String licenseId;
-    String licenseeName;
-    String assigneeName;
-    String assigneeEmail;
-    String licenseRestriction;
-    boolean checkConcurrentUse = false;
-    List<Product> products;
-    String metadata = "0120230914PSAX000005";
-    String hash = "TRIAL:-1920204289";
-    int gracePeriodDays = 7;
-    boolean isAutoProlongated = true;
+    private String licenseId;
+    private String licenseeName;
+    private String assigneeName;
+    private String assigneeEmail;
+    private String licenseRestriction;
+    private Boolean checkConcurrentUse;
+    private List<Product> products;
+    private String metadata;
+    private String hash;
+    private Integer gracePeriodDays;
+    private Boolean isAutoProlongated;
 
 
 
-    // @Override
-    // public String toString() {
-    //     return "{" +
-    //             "\"licenseId\":\"" + licenseId + "\"," +
-    //             "\"licenseeName\":\"" + licenseeName + "\"," +
-    //             "\"assigneeName\":\"" + assigneeName + "\"," +
-    //             "\"assigneeEmail\":\"" + assigneeEmail + "\"," +
-    //             "\"licenseRestriction\":\"" + licenseRestriction + "\"," +
-    //             "\"checkConcurrentUse\":" + checkConcurrentUse + "," +
-    //             "\"products\":" + products + "," +
-    //             "\"metadata\":\"" + metadata + "\"," +
-    //             "\"hash\":\"" + hash + "\"," +
-    //             "\"gracePeriodDays\":" + gracePeriodDays + "," +
-    //             "\"isAutoProlongated\":" + isAutoProlongated +
-    //             "}";
-    // }
-
-    public LicensePart(String licenseId, String[] codes, String date) {
+    public LicensePart(String licenseId, String licenseeName, String[] codes, String date) {
         this.licenseId = licenseId;
-        this.licenseeName = licenseId;
-        this.assigneeName = licenseId;
+        this.licenseeName = licenseeName;
+        this.assigneeName = StrUtil.EMPTY;
         this.products = Arrays.stream(codes).map(code -> new Product(code, date)).collect(Collectors.toList());
+
+        // 一些默认值
+        this.checkConcurrentUse = false;
+        this.metadata = "0120230914PSAX000005";
+        this.hash = "TRIAL:-1920204289";
+        this.gracePeriodDays = 7;
+        this.isAutoProlongated = true;
     }
 
     @Data
     @NoArgsConstructor
     @AllArgsConstructor
-    public class Product {
-        String code;
-        String fallbackDate;
-        String paidUpTo;
-        boolean extended = true;
+    public static class Product {
+        private String code;
+        private String fallbackDate;
+        private String paidUpTo;
+        private boolean extended = true;
 
         public Product(String code, String date) {
             this.code = code;
             this.fallbackDate = date;
             this.paidUpTo = date;
         }
-
-        // @Override
-        // public String toString() {
-        //     return "{" +
-        //             "\"code\":\"" + code + "\"," +
-        //             "\"fallbackDate\":\"" + fallbackDate + "\"," +
-        //             "\"paidUpTo\":\"" + paidUpTo +
-        //             "\"," +
-        //             "\"extended\":" + extended +
-        //             "}";
-        // }
     }
 }
