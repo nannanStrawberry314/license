@@ -4,6 +4,8 @@ package com.lemonzuo.license;
  * @author LemonZuo
  * @create 2024-02-20 22:07
  */
+import lombok.extern.slf4j.Slf4j;
+
 import java.io.ByteArrayInputStream;
 import java.math.BigInteger;
 import java.nio.charset.StandardCharsets;
@@ -13,6 +15,7 @@ import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.security.interfaces.RSAPublicKey;
 
+@Slf4j
 public class PowerConfRuleGen {
 
     private static final String ROOT_CERTIFICATE = "-----BEGIN CERTIFICATE-----\n" +
@@ -48,7 +51,7 @@ public class PowerConfRuleGen {
 
     public static void main(String[] args) throws Exception {
         CertificateFactory certificateFactory = CertificateFactory.getInstance("X.509");
-        X509Certificate cert = (X509Certificate) certificateFactory.generateCertificate(Files.newInputStream(Paths.get("/opt/data/idea_data/jetbrains-license/src/main/resources/cert/ca.crt")));
+        X509Certificate cert = (X509Certificate) certificateFactory.generateCertificate(Files.newInputStream(Paths.get(String.format("%s/ca.crt", Constant.PATH))));
 
         // x：证书的签名密文
         BigInteger x = new BigInteger(1, cert.getSignature());
@@ -66,6 +69,6 @@ public class PowerConfRuleGen {
         RSAPublicKey certPublicKey = (RSAPublicKey) cert.getPublicKey();
         BigInteger r = x.modPow(certPublicKey.getPublicExponent(), certPublicKey.getModulus());
 
-        System.out.printf("EQUAL,%s,%s,%s->%s%n", x, y, z, r);
+        log.info("EQUAL,{},{},{}->{}", x, y, z, r);
     }
 }

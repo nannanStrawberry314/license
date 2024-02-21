@@ -10,6 +10,7 @@ import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.json.JSONUtil;
+import lombok.extern.slf4j.Slf4j;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.openssl.PEMKeyPair;
 import org.bouncycastle.openssl.PEMParser;
@@ -29,6 +30,7 @@ import java.security.cert.X509Certificate;
 import java.util.Calendar;
 import java.util.Date;
 
+@Slf4j
 public class LicenseGenerator {
     public static final String[] DEFAULT_CODES = {
             "II", "PS", "AC", "DB", "RM", "WS", "RD", "CL", "PC", "GO", "DS", "DC", "DPN", "DM",
@@ -67,7 +69,7 @@ public class LicenseGenerator {
 
     private static void generator(String... codes) throws Exception {
         CertificateFactory certificateFactory = CertificateFactory.getInstance("X.509");
-        X509Certificate cert = (X509Certificate) certificateFactory.generateCertificate(Files.newInputStream(Paths.get("/opt/data/idea_data/jetbrains-license/src/main/resources/cert/ca.crt")));
+        X509Certificate cert = (X509Certificate) certificateFactory.generateCertificate(Files.newInputStream(Paths.get(String.format("%s/ca.crt", Constant.PATH))));
 
         // 自己修改 license内容
         Calendar calendar = Calendar.getInstance();
@@ -78,7 +80,7 @@ public class LicenseGenerator {
         String licenseId = "LemonZuo";
         LicensePart license = new LicensePart(licenseId, codes, date);
         String licensePart = JSONUtil.toJsonStr(license);
-        System.out.println(licensePart);
+        log.info("licensePart: {}", licensePart);
         byte[] licensePartBytes = licensePart.getBytes(StandardCharsets.UTF_8);
         String licensePartBase64 = Base64.encode(licensePartBytes);
 
@@ -93,13 +95,13 @@ public class LicenseGenerator {
         String sigResultsBase64 = Base64.encode(signatureBytes);
         // Combine results as needed
         String result = licenseId + "-" + licensePartBase64 + "-" + sigResultsBase64 + "-" + Base64.encode(cert.getEncoded());
-        System.out.println(result);
+        log.info("result: {}", result);
     }
 
 
     static PrivateKey getPrivateKey() throws Exception {
         Security.addProvider(new BouncyCastleProvider());
-        PEMParser pemParser = new PEMParser(new FileReader(FileUtil.getAbsolutePath("/opt/data/idea_data/jetbrains-license/src/main/resources/cert/ca.key")));
+        PEMParser pemParser = new PEMParser(new FileReader(FileUtil.getAbsolutePath(String.format("%s/ca.key", Constant.PATH))));
         JcaPEMKeyConverter converter = new JcaPEMKeyConverter().setProvider("BC");
         Object object = pemParser.readObject();
         KeyPair kp = converter.getKeyPair((PEMKeyPair) object);
