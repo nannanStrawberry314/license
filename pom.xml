@@ -59,8 +59,8 @@
                 <artifactId>maven-compiler-plugin</artifactId>
                 <version>3.8.1</version> <!-- 使用合适的插件版本 -->
                 <configuration>
-                    <source>1.8</source> <!-- 指定Java源代码版本 -->
-                    <target>1.8</target> <!-- 指定目标Java版本 -->
+                    <source>21</source> <!-- 指定Java源代码版本 -->
+                    <target>21</target> <!-- 指定目标Java版本 -->
                 </configuration>
             </plugin>
         </plugins>
