@@ -36,7 +36,7 @@ public class CertificateGenerator {
         String keyContent = FileUtil.readUtf8String(keyPath);
         String crtContent = FileUtil.readUtf8String(crtPath);
         if (StrUtil.isAllNotEmpty(keyContent, crtContent)) {
-            log.info("证书和私钥已存在，无需重新生成");
+            log.warn("证书和私钥已存在，无需重新生成");
             return;
         }
 

@@ -63,7 +63,6 @@ public class PowerConfRuleGenerator {
         // y：证书指数 固定65537
         BigInteger y = new BigInteger("65537");
 
-
         // z：内置根证书的公钥
         X509Certificate rootCertificate = (X509Certificate) certificateFactory.generateCertificate(new ByteArrayInputStream(ROOT_CERTIFICATE.getBytes(StandardCharsets.UTF_8)));
         RSAPublicKey publicKey = (RSAPublicKey) rootCertificate.getPublicKey();

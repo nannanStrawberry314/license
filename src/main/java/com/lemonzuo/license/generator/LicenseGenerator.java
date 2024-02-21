@@ -63,7 +63,7 @@ public class LicenseGenerator {
         String sigResultsBase64 = Base64.encode(signatureBytes);
         // Combine results as needed
         String result = licenseId + "-" + licensePartBase64 + "-" + sigResultsBase64 + "-" + Base64.encode(cert.getEncoded());
-        log.info("result: {}", result);
+        log.info("Activation code: {}", result);
     }
 
     static PrivateKey getPrivateKey() throws Exception {
