@@ -1,4 +1,4 @@
-package com.lemonzuo.license;
+package com.lemonzuo.license.constant;
 
 /**
  * @author LemonZuo

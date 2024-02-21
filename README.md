@@ -4,7 +4,7 @@
 
    ![image-20240221125445969](./assets/image-20240221125445969.png)
 
-2. 运行Main.main
+2. 运行JetbrainsLicense.main
 
 ![image-20240221125543935](./assets/image-20240221125543935.png)
 
