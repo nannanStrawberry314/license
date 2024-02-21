@@ -48,7 +48,7 @@ public class LicenseGenerator {
         LicensePart license = new LicensePart(licenseId, Constant.LICENSEE_NAME, codes, DateUtil.formatDate(effectiveDate));
 
         String licensePart = JSONUtil.toJsonStr(license);
-        log.info("licensePart: {}", licensePart);
+        // log.info("licensePart: {}", licensePart);
 
         byte[] licensePartBytes = licensePart.getBytes(StandardCharsets.UTF_8);
         String licensePartBase64 = Base64.encode(licensePartBytes);
