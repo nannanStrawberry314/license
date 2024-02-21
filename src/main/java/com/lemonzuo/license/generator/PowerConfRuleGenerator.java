@@ -19,6 +19,7 @@ import java.security.interfaces.RSAPublicKey;
 @Slf4j
 public class PowerConfRuleGenerator {
 
+    // 根证书来源：https://github.com/JetBrains/marketplace-makemecoffee-plugin/blob/master/src/main/java/com/company/license/CheckLicense.java
     private static final String ROOT_CERTIFICATE = """
             -----BEGIN CERTIFICATE-----
             MIIFOzCCAyOgAwIBAgIJANJssYOyg3nhMA0GCSqGSIb3DQEBCwUAMBgxFjAUBgNV
