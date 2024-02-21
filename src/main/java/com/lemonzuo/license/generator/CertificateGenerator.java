@@ -30,7 +30,7 @@ import java.util.Date;
 @Slf4j
 public class CertificateGenerator {
 
-    public static void genCrtKey() throws Exception {
+    public static void generate() throws Exception {
         String keyPath = String.format("%s/ca.key", Constant.PATH);
         String crtPath = String.format("%s/ca.crt", Constant.PATH);
         String keyContent = FileUtil.readUtf8String(keyPath);
