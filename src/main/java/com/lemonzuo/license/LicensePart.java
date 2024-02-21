@@ -1,9 +1,5 @@
 package com.lemonzuo.license;
 
-/**
- * @author LemonZuo
- * @create 2024-02-20 22:14
- */
 import cn.hutool.core.util.StrUtil;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -14,8 +10,8 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 /**
- * @author Hua
- * @since 2024-02-01 09:05
+ * @author LemonZuo
+ * @create 2024-02-20 22:14
  */
 @Data
 @NoArgsConstructor
@@ -32,8 +28,6 @@ public class LicensePart {
     private String hash;
     private Integer gracePeriodDays;
     private Boolean isAutoProlongated;
-
-
 
     public LicensePart(String licenseId, String licenseeName, String[] codes, String date) {
         this.licenseId = licenseId;
@@ -56,12 +50,13 @@ public class LicensePart {
         private String code;
         private String fallbackDate;
         private String paidUpTo;
-        private boolean extended = true;
+        private Boolean extended;
 
         public Product(String code, String date) {
             this.code = code;
             this.fallbackDate = date;
             this.paidUpTo = date;
+            this.extended = true;
         }
     }
 }

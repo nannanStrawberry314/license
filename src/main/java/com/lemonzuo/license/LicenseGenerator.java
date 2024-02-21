@@ -1,11 +1,8 @@
 package com.lemonzuo.license;
 
-/**
- * @author LemonZuo
- * @create 2024-02-20 22:15
- */
-
 import cn.hutool.core.codec.Base64;
+import cn.hutool.core.date.DateField;
+import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.ArrayUtil;
@@ -27,10 +24,11 @@ import java.security.Security;
 import java.security.Signature;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
-// import java.util.Base64;
-import java.util.Calendar;
-import java.util.Date;
 
+/**
+ * @author LemonZuo
+ * @create 2024-02-20 22:15
+ */
 @Slf4j
 public class LicenseGenerator {
     // 所有 products的code https://data.services.jetbrains.com/products?fields=code,name,description
@@ -48,21 +46,20 @@ public class LicenseGenerator {
         X509Certificate cert = (X509Certificate) certificateFactory.generateCertificate(Files.newInputStream(Paths.get(String.format("%s/ca.crt", Constant.PATH))));
 
         // 自己修改 license内容
-        Calendar calendar = Calendar.getInstance();
-        calendar.setTime(new Date());
-        calendar.add(Calendar.YEAR, 10);
-        String date = DateUtil.formatDate(calendar.getTime());
+        DateTime endOfToday = DateUtil.endOfDay(DateUtil.date());
+        // 偏移10年
+        DateTime effectiveDate = DateUtil.offset(endOfToday, DateField.YEAR, 10);
+
         codes = ArrayUtil.isEmpty(codes) ? DEFAULT_CODES : codes;
         String licenseId = RandomUtil.randomString(RandomUtil.BASE_CHAR_NUMBER_LOWER.toUpperCase(), 10);
         String licenseeName = "LemonZuo";
-        LicensePart license = new LicensePart(licenseId, licenseeName, codes, date);
+        LicensePart license = new LicensePart(licenseId, licenseeName, codes, DateUtil.formatDate(effectiveDate));
         String licensePart = JSONUtil.toJsonStr(license);
         log.info("licensePart: {}", licensePart);
         byte[] licensePartBytes = licensePart.getBytes(StandardCharsets.UTF_8);
         String licensePartBase64 = Base64.encode(licensePartBytes);
 
         PrivateKey privateKey = getPrivateKey();
-
 
         Signature signature = Signature.getInstance("SHA1withRSA");
         signature.initSign(privateKey);
@@ -74,7 +71,6 @@ public class LicenseGenerator {
         String result = licenseId + "-" + licensePartBase64 + "-" + sigResultsBase64 + "-" + Base64.encode(cert.getEncoded());
         log.info("result: {}", result);
     }
-
 
     static PrivateKey getPrivateKey() throws Exception {
         Security.addProvider(new BouncyCastleProvider());

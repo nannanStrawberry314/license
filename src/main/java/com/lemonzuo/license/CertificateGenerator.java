@@ -1,10 +1,5 @@
 package com.lemonzuo.license;
 
-/**
- * @author LemonZuo
- * @create 2024-02-20 22:03
- */
-
 import cn.hutool.core.date.DateField;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
@@ -21,11 +16,14 @@ import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
 
 import java.io.FileWriter;
 import java.math.BigInteger;
-import java.net.URL;
 import java.security.*;
 import java.security.cert.X509Certificate;
 import java.util.Date;
 
+/**
+ * @author LemonZuo
+ * @create 2024-02-20 22:03
+ */
 @Slf4j
 public class CertificateGenerator {
 

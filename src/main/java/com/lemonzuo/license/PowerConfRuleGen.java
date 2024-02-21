@@ -1,9 +1,5 @@
 package com.lemonzuo.license;
 
-/**
- * @author LemonZuo
- * @create 2024-02-20 22:07
- */
 import lombok.extern.slf4j.Slf4j;
 
 import java.io.ByteArrayInputStream;
@@ -15,6 +11,10 @@ import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.security.interfaces.RSAPublicKey;
 
+/**
+ * @author LemonZuo
+ * @create 2024-02-20 22:07
+ */
 @Slf4j
 public class PowerConfRuleGen {
 
