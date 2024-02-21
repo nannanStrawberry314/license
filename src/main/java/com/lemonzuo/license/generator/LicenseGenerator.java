@@ -48,7 +48,7 @@ public class LicenseGenerator {
         LicensePart license = new LicensePart(licenseId, Constant.LICENSEE_NAME, codes, DateUtil.formatDate(effectiveDate));
 
         String licensePart = JSONUtil.toJsonStr(license);
-        // log.info("licensePart: {}", licensePart);
+        log.info("licensePart: {}", licensePart);
 
         byte[] licensePartBytes = licensePart.getBytes(StandardCharsets.UTF_8);
         String licensePartBase64 = Base64.encode(licensePartBytes);
@@ -63,7 +63,10 @@ public class LicenseGenerator {
         String sigResultsBase64 = Base64.encode(signatureBytes);
         // Combine results as needed
         String result = licenseId + "-" + licensePartBase64 + "-" + sigResultsBase64 + "-" + Base64.encode(cert.getEncoded());
+
+        log.info("================== Activation code ==================");
         log.info("Activation code: {}", result);
+        log.info("================== Activation code ==================");
     }
 
     static PrivateKey getPrivateKey() throws Exception {

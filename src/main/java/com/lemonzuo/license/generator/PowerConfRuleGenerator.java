@@ -72,6 +72,8 @@ public class PowerConfRuleGenerator {
         RSAPublicKey certPublicKey = (RSAPublicKey) cert.getPublicKey();
         BigInteger r = x.modPow(certPublicKey.getPublicExponent(), certPublicKey.getModulus());
 
+        log.info("================== PowerConfRule Result ==================");
         log.info("EQUAL,{},{},{}->{}", x, y, z, r);
+        log.info("================== PowerConfRule Result ==================");
     }
 }

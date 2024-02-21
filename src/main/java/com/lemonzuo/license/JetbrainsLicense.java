@@ -14,10 +14,8 @@ public class JetbrainsLicense {
     public static void main(String[] args) throws Exception {
         // 1. 生成证书和私钥
         CertificateGenerator.generate();
-        log.info("================== PowerConfRule Result  ==================");
         // 2. 生成证书校验规则
         PowerConfRuleGenerator.generate();
-        log.info("================== Activation code ==================");
         // 3. 生成证书
         LicenseGenerator.generate();
     }
