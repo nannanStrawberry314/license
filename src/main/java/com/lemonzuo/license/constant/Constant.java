@@ -1,17 +1,38 @@
 package com.lemonzuo.license.constant;
 
+import lombok.extern.slf4j.Slf4j;
+
 /**
  * @author LemonZuo
  * @create 2024-02-21 8:43
  */
+@Slf4j
 public class Constant {
     /**
      * 证书存放路径
      */
-    public static final String PATH = "E:\\idea_data\\jetbrains-license\\src\\main\\resources\\cert";
-    /**
-     * 证书持有者
-     */
+    public static String PATH;
+
+    static {
+        // 首先尝试从系统属性中获取路径
+        String customPath = System.getProperty("path");
+        if (customPath != null && !customPath.isEmpty()) {
+            log.info("系统属性中获取路径: {}", customPath);
+            PATH = customPath;
+        } else {
+            log.info("使用系统设置默认路径");
+            // 系统属性中没有指定，根据操作系统设置默认路径
+            String osName = System.getProperty("os.name").toLowerCase();
+            if (osName.contains("win")) {
+                PATH = "E:\\idea_data\\jetbrains-license\\src\\main\\resources\\cert";
+            } else {
+                PATH = "/opt/module/jetbrains-license/cert";
+            }
+        }
+    }
+        /**
+         * 证书持有者
+         */
     public static final String LICENSEE_NAME = "LemonZuo";
     /**
      * 所有 products的code <a href="https://data.services.jetbrains.com/products?fields=code,name,description"></a>
