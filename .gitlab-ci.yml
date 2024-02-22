@@ -11,6 +11,9 @@ workflow:
     # 手动构建才开始
     - if: '$CI_PIPELINE_SOURCE == "web"'
       when: always
+    # 通过 API 触发时开始构建
+    - if: '$CI_PIPELINE_SOURCE == "api"'
+      when: always
 
 stages:
   - notify_start
