@@ -14,7 +14,7 @@ public class Constant {
     public static String PATH;
 
     static {
-        // 首先尝试从系统属性中获取路径
+        // 首先尝试从系统属性中获取路径, 可以通过启动参数 -Dpath=xxx 来指定路径
         String customPath = System.getProperty("path");
         if (customPath != null && !customPath.isEmpty()) {
             log.info("系统属性中获取路径: {}", customPath);
@@ -23,16 +23,20 @@ public class Constant {
             log.info("使用系统设置默认路径");
             // 系统属性中没有指定，根据操作系统设置默认路径
             String osName = System.getProperty("os.name").toLowerCase();
+            log.info("操作系统: {}", osName);
             if (osName.contains("win")) {
                 PATH = "E:\\idea_data\\jetbrains-license\\src\\main\\resources\\cert";
+            } else if (osName.contains("mac")) {
+                PATH = "/opt/data/idea_data/jetbrains-license/src/main/resources/cert";
             } else {
                 PATH = "/opt/module/jetbrains-license/cert";
             }
         }
     }
-        /**
-         * 证书持有者
-         */
+
+    /**
+     * 证书持有者
+     */
     public static final String LICENSEE_NAME = "LemonZuo";
     /**
      * 所有 products的code <a href="https://data.services.jetbrains.com/products?fields=code,name,description"></a>
