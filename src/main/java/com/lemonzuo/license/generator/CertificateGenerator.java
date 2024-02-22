@@ -33,8 +33,14 @@ public class CertificateGenerator {
     public static void generate() throws Exception {
         String keyPath = String.format("%s/ca.key", Constant.PATH);
         String crtPath = String.format("%s/ca.crt", Constant.PATH);
-        String keyContent = FileUtil.readUtf8String(keyPath);
-        String crtContent = FileUtil.readUtf8String(crtPath);
+        String keyContent = null;
+        if (FileUtil.exist(keyPath)) {
+            keyContent = FileUtil.readUtf8String(keyPath);
+        }
+        String crtContent = null;
+        if (FileUtil.exist(crtPath)) {
+            crtContent = FileUtil.readUtf8String(crtPath);
+        }
         if (StrUtil.isAllNotEmpty(keyContent, crtContent)) {
             log.warn("证书和私钥已存在，无需重新生成");
             return;
