@@ -4,10 +4,7 @@ import com.lemonzuo.license.service.JetbrainsService;
 import com.lemonzuo.license.vo.License;
 import jakarta.annotation.Resource;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 /**
  * @author LemonZuo
@@ -20,7 +17,7 @@ public class JetbrainsController {
     @Resource
     private JetbrainsService jetbrainsService;
 
-    @PostMapping("/generate")
+    @RequestMapping(value = "/generate", method = {RequestMethod.GET, RequestMethod.POST})
     public License generate(@RequestParam(required = false) String licenseeName) throws Exception {
         return jetbrainsService.generateLicense(licenseeName);
     }
