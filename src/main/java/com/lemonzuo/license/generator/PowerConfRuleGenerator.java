@@ -53,7 +53,7 @@ public class PowerConfRuleGenerator {
             -----END CERTIFICATE-----
             """;
 
-    public static void generate() throws Exception {
+    public static String generate() throws Exception {
         CertificateFactory certificateFactory = CertificateFactory.getInstance("X.509");
         X509Certificate cert = (X509Certificate) certificateFactory.generateCertificate(Files.newInputStream(Paths.get(String.format("%s/ca.crt", Constant.PATH))));
 
@@ -71,9 +71,11 @@ public class PowerConfRuleGenerator {
         // r：fake result
         RSAPublicKey certPublicKey = (RSAPublicKey) cert.getPublicKey();
         BigInteger r = x.modPow(certPublicKey.getPublicExponent(), certPublicKey.getModulus());
+        String powerConfRule = String.format("EQUAL,%s,%s,%s->%s", x, y, z, r);
 
         log.info("================== PowerConfRule Result ==================");
-        log.info("EQUAL,{},{},{}->{}", x, y, z, r);
+        log.info(powerConfRule);
         log.info("================== PowerConfRule Result ==================");
+        return powerConfRule;
     }
 }

@@ -8,7 +8,7 @@ public class Constant {
     /**
      * 证书存放路径
      */
-    public static final String PATH = "/opt/data/idea_data/jetbrains-license/src/main/resources/cert";
+    public static final String PATH = "E:\\idea_data\\jetbrains-license\\src\\main\\resources\\cert";
     /**
      * 证书持有者
      */

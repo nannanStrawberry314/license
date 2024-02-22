@@ -29,10 +29,11 @@ public class LicensePart {
     private Integer gracePeriodDays;
     private Boolean isAutoProlongated;
 
-    public LicensePart(String licenseId, String licenseeName, String[] codes, String date) {
+    public LicensePart(String licenseId, String licenseeName, List<String> codes, String date) {
         this.licenseId = licenseId;
         this.licenseeName = licenseeName;
-        this.products = Arrays.stream(codes).map(code -> new Product(code, date)).collect(Collectors.toList());
+        this.products = codes.stream().map(code -> new Product(code, date)).collect(Collectors.toList());
+
 
         // 一些默认值
         this.assigneeName = StrUtil.EMPTY;

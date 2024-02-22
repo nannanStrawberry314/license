@@ -7,9 +7,11 @@ import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.RandomUtil;
+import cn.hutool.extra.spring.SpringUtil;
 import cn.hutool.json.JSONUtil;
 import com.lemonzuo.license.constant.Constant;
 import com.lemonzuo.license.domain.LicensePart;
+import com.lemonzuo.license.service.CodeService;
 import lombok.extern.slf4j.Slf4j;
 import org.bouncycastle.jce.provider.BouncyCastleProvider;
 import org.bouncycastle.openssl.PEMKeyPair;
@@ -26,6 +28,9 @@ import java.security.Security;
 import java.security.Signature;
 import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
 
 /**
  * @author LemonZuo
@@ -34,7 +39,7 @@ import java.security.cert.X509Certificate;
 @Slf4j
 public class LicenseGenerator {
 
-    public static void generate(String... codes) throws Exception {
+    public static String generate(String... codes) throws Exception {
         CertificateFactory certificateFactory = CertificateFactory.getInstance("X.509");
         X509Certificate cert = (X509Certificate) certificateFactory.generateCertificate(Files.newInputStream(Paths.get(String.format("%s/ca.crt", Constant.PATH))));
 
@@ -42,10 +47,16 @@ public class LicenseGenerator {
         DateTime endOfToday = DateUtil.endOfDay(DateUtil.date());
         // 偏移10年
         DateTime effectiveDate = DateUtil.offset(endOfToday, DateField.YEAR, 10);
-        codes = ArrayUtil.isEmpty(codes) ? Constant.DEFAULT_CODES : codes;
+        List<String> codeList = new ArrayList<>();
+        if (ArrayUtil.isNotEmpty(codes)) {
+            Collections.addAll(codeList, codes);
+        } else {
+            CodeService codeService = SpringUtil.getBean(CodeService.class);
+            codeList.addAll(codeService.getCodeList());
+        }
         String licenseId = RandomUtil.randomString(RandomUtil.BASE_CHAR_NUMBER_LOWER.toUpperCase(), 10);
 
-        LicensePart license = new LicensePart(licenseId, Constant.LICENSEE_NAME, codes, DateUtil.formatDate(effectiveDate));
+        LicensePart license = new LicensePart(licenseId, Constant.LICENSEE_NAME, codeList, DateUtil.formatDate(effectiveDate));
 
         String licensePart = JSONUtil.toJsonStr(license);
         log.info("licensePart: {}", licensePart);
@@ -62,11 +73,12 @@ public class LicenseGenerator {
 
         String sigResultsBase64 = Base64.encode(signatureBytes);
         // Combine results as needed
-        String result = licenseId + "-" + licensePartBase64 + "-" + sigResultsBase64 + "-" + Base64.encode(cert.getEncoded());
+        String activationCode = licenseId + "-" + licensePartBase64 + "-" + sigResultsBase64 + "-" + Base64.encode(cert.getEncoded());
 
         log.info("================== Activation code ==================");
-        log.info("Activation code: {}", result);
+        log.info("Activation code: {}", activationCode);
         log.info("================== Activation code ==================");
+        return activationCode;
     }
 
     static PrivateKey getPrivateKey() throws Exception {

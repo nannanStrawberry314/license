@@ -1,0 +1,3 @@
+spring:
+  datasource:
+    url: jdbc:sqlite:/opt/module/jetbrains-license/db/jetbrains_license.db
