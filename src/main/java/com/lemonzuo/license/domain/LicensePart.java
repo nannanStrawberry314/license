@@ -19,6 +19,7 @@ import java.util.stream.Collectors;
 public class LicensePart {
     private String licenseId;
     private String licenseeName;
+    private String licenseeType;
     private String assigneeName;
     private String assigneeEmail;
     private String licenseRestriction;
@@ -36,6 +37,7 @@ public class LicensePart {
 
 
         // 一些默认值
+        this.licenseeType = "PERSONAL";
         this.assigneeName = StrUtil.EMPTY;
         this.checkConcurrentUse = false;
         this.metadata = "0120230914PSAX000005";
