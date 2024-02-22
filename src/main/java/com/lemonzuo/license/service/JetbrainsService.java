@@ -11,5 +11,5 @@ public interface JetbrainsService {
      * 生成license
      * @return License
      */
-    License generateLicense() throws Exception;
+    License generateLicense(String licenseeName) throws Exception;
 }

@@ -7,6 +7,7 @@ import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.ArrayUtil;
 import cn.hutool.core.util.RandomUtil;
+import cn.hutool.core.util.StrUtil;
 import cn.hutool.extra.spring.SpringUtil;
 import cn.hutool.json.JSONUtil;
 import com.lemonzuo.license.constant.Constant;
@@ -39,7 +40,7 @@ import java.util.List;
 @Slf4j
 public class LicenseGenerator {
 
-    public static String generate(String... codes) throws Exception {
+    public static String generate(String licenseeName, String... codes) throws Exception {
         CertificateFactory certificateFactory = CertificateFactory.getInstance("X.509");
         X509Certificate cert = (X509Certificate) certificateFactory.generateCertificate(Files.newInputStream(Paths.get(String.format("%s/ca.crt", Constant.PATH))));
 
@@ -56,7 +57,7 @@ public class LicenseGenerator {
         }
         String licenseId = RandomUtil.randomString(RandomUtil.BASE_CHAR_NUMBER_LOWER.toUpperCase(), 10);
 
-        LicensePart license = new LicensePart(licenseId, Constant.LICENSEE_NAME, codeList, DateUtil.formatDate(effectiveDate));
+        LicensePart license = new LicensePart(licenseId, StrUtil.emptyToDefault(licenseeName, Constant.LICENSEE_NAME), codeList, DateUtil.formatDate(effectiveDate));
 
         String licensePart = JSONUtil.toJsonStr(license);
         log.info("licensePart: {}", licensePart);

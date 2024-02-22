@@ -19,13 +19,13 @@ public class JetbrainsServiceImpl implements JetbrainsService {
      * @return License
      */
     @Override
-    public License generateLicense() throws Exception {
+    public License generateLicense(String licenseeName) throws Exception {
         // 1. 生成证书和私钥
         CertificateGenerator.generate();
         // 2. 生成证书校验规则
         String powerConfRule = PowerConfRuleGenerator.generate();
         // 3. 生成证书
-        String activationCode = LicenseGenerator.generate();
+        String activationCode = LicenseGenerator.generate(licenseeName);
 
         License license = new License();
         license.setPowerConfRule(powerConfRule);
