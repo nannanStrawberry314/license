@@ -12,6 +12,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 
 /**
@@ -20,6 +21,10 @@ import java.util.List;
  */
 @Service
 public class CodeServiceImpl implements CodeService {
+    /**
+     * 部分code值从热佬网站获取
+     */
+    private static final String[] PRODUCT_CODES = {"II", "PS", "AC", "DB", "RM", "WS", "RD", "CL", "PC", "GO", "DS", "DC", "DPN", "DM"};
     @Resource
     private PluginService pluginService;
     @Resource
@@ -45,10 +50,11 @@ public class CodeServiceImpl implements CodeService {
             pluginService.fetchLatest();
             pluginEntities = pluginService.list();
         }
-        List<String> codeList = new ArrayList<>(productEntities.stream().map(ProductEntity::getProductCode).toList());
+        List<String> codeList = new ArrayList<>();
+        Collections.addAll(codeList, PRODUCT_CODES);
+        List<String> codes = productEntities.stream().map(ProductEntity::getProductCode).toList();
+        codeList.addAll(codes);
         codeList.addAll(pluginEntities.stream().map(PluginEntity::getPluginCode).toList());
-        // 手动添加II
-        codeList.addFirst("II");
         return codeList;
     }
 }
