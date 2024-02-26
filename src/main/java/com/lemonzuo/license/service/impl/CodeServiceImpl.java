@@ -47,6 +47,8 @@ public class CodeServiceImpl implements CodeService {
         }
         List<String> codeList = new ArrayList<>(productEntities.stream().map(ProductEntity::getProductCode).toList());
         codeList.addAll(pluginEntities.stream().map(PluginEntity::getPluginCode).toList());
+        // 手动添加II
+        codeList.addFirst("II");
         return codeList;
     }
 }
