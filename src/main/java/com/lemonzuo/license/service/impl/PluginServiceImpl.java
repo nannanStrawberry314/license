@@ -27,17 +27,28 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class PluginServiceImpl extends ServiceImpl<PluginMapper, PluginEntity> implements PluginService {
     @Resource
     private ObjectMapper mapper;
+
     /**
-     * 查询jetbrains付费插件信息
-     *
-     * @throws Exception 异常
+     * 获取付费插件信息
      */
-    @Override
-    @Transactional(rollbackFor = Exception.class)
-    public void fetchLatest() throws Exception {
+    private static final String PAID_PLUGINS_URL = "https://plugins.jetbrains.com/api/searchPlugins?excludeTags=theme&max=500&offset=0&orderBy=downloads&pricingModels=PAID";
+    /**
+     * 获取可免费增值插件信息
+     */
+    private static final String FREEMIUM_PLUGINS_URL = "https://plugins.jetbrains.com/api/searchPlugins?excludeTags=theme&max=500&offset=0&orderBy=downloads&pricingModels=FREEMIUM";
+    /**
+     * 获取插件详情
+     */
+    private static final String PLUGIN_DETAIL_URL = "https://plugins.jetbrains.com/api/plugins/";
+    /**
+     * user-agent
+     */
+    private static final String USER_AGENT = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3";
+
+    private List<PluginEntity> fetchPaidPlugins(String url) throws Exception {
         HttpResponse response = HttpRequest
-                .get("https://plugins.jetbrains.com/api/searchPlugins?excludeTags=theme&max=500&offset=0&orderBy=downloads&pricingModels=PAID")
-                .header("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3")
+                .get(url)
+                .header("User-Agent", USER_AGENT)
                 .execute();
 
         if (!response.isOk()) {
@@ -54,15 +65,17 @@ public class PluginServiceImpl extends ServiceImpl<PluginMapper, PluginEntity> i
             log.info("待处理插件总数:{},当前正在处理第:{}个,插件Id:{}", size, index.getAndIncrement(), pluginId);
             // 获取详情
             HttpResponse detailResponse = HttpRequest
-                    .get("https://plugins.jetbrains.com/api/plugins/" + pluginId)
-                    .header("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3")
+                    .get(PLUGIN_DETAIL_URL + pluginId)
+                    .header("User-Agent", USER_AGENT)
                     .execute();
+
             if (!detailResponse.isOk()) {
                 log.error("获取插件详情失败, id:{}", pluginId);
                 // 休眠一会
                 Thread.sleep(RandomUtil.randomInt(100, 500));
                 continue;
             }
+
             JsonNode detail = mapper.readTree(detailResponse.body());
             String pluginName = detail.get("name").asText();
             String pluginCode = detail.get("purchaseInfo").get("productCode").asText();
@@ -75,6 +88,24 @@ public class PluginServiceImpl extends ServiceImpl<PluginMapper, PluginEntity> i
             // 休眠一会
             Thread.sleep(RandomUtil.randomInt(100, 500));
         }
+
+        return list;
+    }
+
+    /**
+     * 查询jetbrains付费插件信息
+     *
+     * @throws Exception 异常
+     */
+    @Override
+    @Transactional(rollbackFor = Exception.class)
+    public void fetchLatest() throws Exception {
+
+        List<PluginEntity> list = new ArrayList<>();
+
+        list.addAll(fetchPaidPlugins(PAID_PLUGINS_URL));
+        list.addAll(fetchPaidPlugins(FREEMIUM_PLUGINS_URL));
+
         if (!list.isEmpty()) {
             // 清空表
             baseMapper.truncate();
