@@ -4,6 +4,7 @@ import cn.hutool.core.util.StrUtil;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestHeader;
 import org.springframework.web.bind.annotation.RestController;
@@ -23,19 +24,27 @@ public class IndexController {
     private static final String HTTPS = "https";
     private static final String HTTPS_PORT = "443";
     private static final String END_STR = "/";
+
+    @Value("${server.port}")
+    private String serverPort;
+
     @GetMapping("/")
-    public void index(@RequestHeader String scheme,
-                      @RequestHeader String host,
-                      @RequestHeader String port,
-                      @RequestHeader String requestUri,
+    public void index(@RequestHeader(required = false, defaultValue = "") String scheme,
+                      @RequestHeader(required = false, defaultValue = "") String host,
+                      @RequestHeader(required = false, defaultValue = "") String port,
+                      @RequestHeader(required = false, defaultValue = "") String requestUri,
                       HttpServletRequest request, HttpServletResponse response) {
+
+        scheme = StrUtil.emptyToDefault(scheme, HTTP);
+        if (host.contains(":")) {
+            host = host.substring(0, host.indexOf(":"));
+        }
+        host = StrUtil.emptyToDefault(host, "127.0.0.1");
+        port = StrUtil.emptyToDefault(port, serverPort);
+
         response.setContentType("text/html; charset=utf-8");
         response.setStatus(HttpServletResponse.SC_OK);
         // 拼接服务器地址
-        // String scheme = request.getHeader("scheme");
-        // String host = request.getHeader("host");
-        // String port = request.getHeader("port");
-        // String requestUri = request.getHeader("request_uri");
         if (StrUtil.isNotEmpty(requestUri) && requestUri.endsWith(END_STR)) {
             requestUri = requestUri.substring(0, requestUri.length() - 1);
         }
