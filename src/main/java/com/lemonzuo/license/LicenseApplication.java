@@ -11,7 +11,7 @@ import org.springframework.scheduling.annotation.EnableScheduling;
  */
 @EnableScheduling
 @SpringBootApplication
-@MapperScan("com.lemonzuo.license.jetbrains.mapper")
+@MapperScan("com.lemonzuo.license.**.mapper")
 public class LicenseApplication {
     public static void main(String[] args) {
         SpringApplication.run(LicenseApplication.class, args);

@@ -25,11 +25,11 @@ public class Constant {
             String osName = System.getProperty("os.name").toLowerCase();
             log.info("操作系统: {}", osName);
             if (osName.contains("win")) {
-                PATH = "E:\\idea_data\\jetbrains-license\\src\\main\\resources\\cert";
+                PATH = "E:\\idea_data\\license\\src\\main\\resources\\cert";
             } else if (osName.contains("mac")) {
-                PATH = "/opt/data/idea_data/jetbrains-license/src/main/resources/cert";
+                PATH = "/opt/data/idea_data/license/src/main/resources/cert";
             } else {
-                PATH = "/opt/module/jetbrains-license/cert";
+                PATH = "/opt/module/license/cert";
             }
         }
     }

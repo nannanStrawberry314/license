@@ -23,6 +23,10 @@ mybatis-plus:
       # 逻辑未删除全局值（0表示未删除，这也是Mybatis Plus的默认配置）
       logic-not-delete-value: 0
   configuration:
+    log-impl: org.apache.ibatis.logging.slf4j.Slf4jImpl  # 日志实现
     map-underscore-to-camel-case: true
     cache-enabled: false
     jdbc-type-for-null: 'null'
+# 日志配置
+logging:
+  config: classpath:logback-config.xml
