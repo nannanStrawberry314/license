@@ -62,7 +62,7 @@ build:
     - mvn clean package
   artifacts:
     paths:
-      - target/jetbrains-license.jar
+      - target/license.jar
     expire_in: 1 day
 
 # 部署
@@ -73,6 +73,6 @@ deploy:
  script:
    - eval $(ssh-agent -s)
    - echo "$SSH_PRIVATE_KEY" | tr -d '\r' | ssh-add -
-   - ssh -o StrictHostKeyChecking=no $USER@$HOST "cp /opt/module/jetbrains-license/jetbrains-license.jar /opt/module/jetbrains-license/jetbrains-license_$(date +\"%Y%m%d%H%M\").jar"
-   - scp target/jetbrains-license.jar $USER@$HOST:/opt/module/jetbrains-license/jetbrains-license.jar
-   - ssh -o StrictHostKeyChecking=no $USER@$HOST "/opt/module/jetbrains-license/startup.sh"
+   - ssh -o StrictHostKeyChecking=no $USER@$HOST "cp /opt/module/license/license.jar /opt/module/license/license_$(date +\"%Y%m%d%H%M\").jar"
+   - scp target/license.jar $USER@$HOST:/opt/module/license/license.jar
+   - ssh -o StrictHostKeyChecking=no $USER@$HOST "/opt/module/license/startup.sh"

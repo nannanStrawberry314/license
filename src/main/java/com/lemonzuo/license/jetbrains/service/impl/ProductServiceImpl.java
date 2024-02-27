@@ -16,6 +16,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.atomic.AtomicInteger;
 
 /**
  * @author LemonZuo
@@ -41,8 +42,11 @@ public class ProductServiceImpl extends ServiceImpl<ProductMapper, ProductEntity
             throw new Exception("获取产品信息失败");
         }
         JsonNode products = mapper.readTree(response.body());
+        int size = products.size();
+        AtomicInteger index = new AtomicInteger(1);
         List<ProductEntity> list = new ArrayList<>();
         for (JsonNode product : products) {
+            log.info("待处Product总数:{},当前正在处理第:{}个", size, index.getAndIncrement());
             ProductEntity entity = new ProductEntity();
             entity.setProductDetail(product.toPrettyString());
             entity.setProductCode(product.get("code").asText());

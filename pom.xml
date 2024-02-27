@@ -11,10 +11,10 @@
     </parent>
 
     <groupId>com.lemonzuo</groupId>
-    <artifactId>jetbrains-license</artifactId>
+    <artifactId>license</artifactId>
     <version>1.0</version>
-    <name>jetbrains-license</name>
-    <description>jetbrains-license</description>
+    <name>license</name>
+    <description>license</description>
 
     <properties>
         <java.version>21</java.version>
@@ -61,7 +61,7 @@
     </dependencies>
 
     <build>
-        <finalName>jetbrains-license</finalName>
+        <finalName>license</finalName>
         <plugins>
             <plugin>
                 <groupId>org.springframework.boot</groupId>
