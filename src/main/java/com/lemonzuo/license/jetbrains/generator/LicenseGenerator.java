@@ -2,10 +2,10 @@ package com.lemonzuo.license.jetbrains.generator;
 
 import cn.hutool.core.codec.Base64;
 import cn.hutool.core.date.DateField;
-import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.io.FileUtil;
 import cn.hutool.core.util.ArrayUtil;
+import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.core.util.RandomUtil;
 import cn.hutool.core.util.StrUtil;
 import cn.hutool.extra.spring.SpringUtil;
@@ -31,6 +31,7 @@ import java.security.cert.CertificateFactory;
 import java.security.cert.X509Certificate;
 import java.util.ArrayList;
 import java.util.Collections;
+import java.util.Date;
 import java.util.List;
 
 /**
@@ -40,14 +41,18 @@ import java.util.List;
 @Slf4j
 public class LicenseGenerator {
 
-    public static String generate(String licenseeName, String... codes) throws Exception {
+    public static String generate(String licenseeName, Date effectiveDate, String... codes) throws Exception {
         CertificateFactory certificateFactory = CertificateFactory.getInstance("X.509");
         X509Certificate cert = (X509Certificate) certificateFactory.generateCertificate(Files.newInputStream(Paths.get(String.format("%s/ca.crt", Constant.PATH))));
 
-        // 自己修改 license内容
-        DateTime endOfToday = DateUtil.endOfDay(DateUtil.date());
-        // 偏移10年
-        DateTime effectiveDate = DateUtil.offset(endOfToday, DateField.YEAR, 10);
+        // 当天的23:59:59
+        Date endOfToday = DateUtil.endOfDay(DateUtil.date());
+        // 3年
+        Date thereYearsLater = DateUtil.offset(endOfToday, DateField.YEAR, 3);
+        // 有效日期默认为3年后
+        effectiveDate = ObjectUtil.defaultIfNull(effectiveDate, thereYearsLater);
+
+        // 生成licensePart
         List<String> codeList = new ArrayList<>();
         if (ArrayUtil.isNotEmpty(codes)) {
             Collections.addAll(codeList, codes);
@@ -73,8 +78,8 @@ public class LicenseGenerator {
         byte[] signatureBytes = signature.sign();
 
         String sigResultsBase64 = Base64.encode(signatureBytes);
-        // Combine results as needed
-        String activationCode = licenseId + "-" + licensePartBase64 + "-" + sigResultsBase64 + "-" + Base64.encode(cert.getEncoded());
+        // 生成activationCode
+        String activationCode = StrUtil.join("-", licenseId, licensePartBase64, sigResultsBase64, Base64.encode(cert.getEncoded()));
 
         log.info("================== Activation code ==================");
         log.info("Activation code: {}", activationCode);
