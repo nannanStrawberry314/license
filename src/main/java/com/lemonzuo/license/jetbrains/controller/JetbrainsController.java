@@ -25,12 +25,13 @@ public class JetbrainsController {
      * 生成license
      *
      * @param licenseeName 授权人
-     * @param effectiveDate 有效日期
+     * @param effectiveDateStr 有效日期
      * @return License 证书
      */
     @RequestMapping(value = "/generate", method = {RequestMethod.GET, RequestMethod.POST})
-    public License generate(@RequestParam(required = false) String licenseeName,
-                            @RequestParam(required = false) Date effectiveDate) throws Exception {
+    public License generate(@RequestParam(required = false, defaultValue = "") String licenseeName,
+                            @RequestParam(required = false, name = "effectiveDate", defaultValue = "") String effectiveDateStr) throws Exception {
+        Date effectiveDate = DateUtil.parse(effectiveDateStr);
         if (ObjectUtil.isNotNull(effectiveDate)) {
             // 传递了effectiveDate情况下，有效日期默认为当天的23:59:59
             effectiveDate = DateUtil.endOfDay(effectiveDate);
