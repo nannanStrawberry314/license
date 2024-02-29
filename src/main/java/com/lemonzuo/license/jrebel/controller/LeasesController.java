@@ -41,7 +41,6 @@ public class LeasesController {
         if (offline) {
             signature = StrUtil.join(";", clientRandomness, serverRandomness, guid, true, validFrom, validUntil);
         } else {
-
             signature = StrUtil.join(";", clientRandomness, serverRandomness, guid, false);
         }
         log.info("signature: {}", signature);
@@ -67,14 +66,25 @@ public class LeasesController {
         }
 
         JrebelLeasesHandlerVO vo = new JrebelLeasesHandlerVO();
-        vo.setServerVersion(ServerConstant.SERVER_VERSION).setServerProtocolVersion(ServerConstant.SERVER_PROTOCOL_VERSION)
-                .setServerGuid(ServerConstant.SERVER_GUID).setSignature(ServerConstant.JREBEL_LEASES_HANDLER_SIGNATURE)
+        vo.setServerVersion(ServerConstant.SERVER_VERSION)
+                .setServerProtocolVersion(ServerConstant.SERVER_PROTOCOL_VERSION)
+                .setServerGuid(ServerConstant.SERVER_GUID)
+                .setSignature(ServerConstant.JREBEL_LEASES_HANDLER_SIGNATURE)
                 .setServerRandomness(ServerConstant.SERVER_RANDOMNESS)
-                .setGroupType(ServerConstant.GROUP_TYPE).setId(1)
-                .setLicenseType(1).setEvaluationLicense(false).setSeatPoolType(ServerConstant.SEAT_POOL_TYPE).setStatusCode(ServerConstant.STATUS_CODE)
-                .setCompany(username).setLicenseValidFrom(1490544001000L).setLicenseValidUntil(1691839999000L)
-                .setOffline(offline).setValidFrom(validFrom).setValidUntil(validUntil)
-                .setOrderId(IdUtil.getSnowflakeNextIdStr()).setZeroIds(Collections.emptyList());
+                .setGroupType(ServerConstant.GROUP_TYPE)
+                .setId(1)
+                .setLicenseType(1)
+                .setEvaluationLicense(false)
+                .setSeatPoolType(ServerConstant.SEAT_POOL_TYPE)
+                .setStatusCode(ServerConstant.STATUS_CODE)
+                .setCompany(username)
+                .setLicenseValidFrom(1490544001000L)
+                .setLicenseValidUntil(1691839999000L)
+                .setOffline(offline)
+                .setValidFrom(validFrom)
+                .setValidUntil(validUntil)
+                .setOrderId(IdUtil.getSnowflakeNextIdStr())
+                .setZeroIds(Collections.emptyList());
 
         String signature = sign(clientRandomness, guid, offline, validFrom, validUntil);
 
@@ -88,8 +98,11 @@ public class LeasesController {
         vo.setServerVersion(ServerConstant.SERVER_VERSION)
                 .setServerProtocolVersion(ServerConstant.SERVER_PROTOCOL_VERSION)
                 .setServerGuid(ServerConstant.SERVER_GUID)
-                .setGroupType(ServerConstant.GROUP_TYPE).setStatusCode(ServerConstant.STATUS_CODE).setCompany(username)
-                .setMsg(StrUtil.NULL).setStatusMessage(StrUtil.NULL);
+                .setGroupType(ServerConstant.GROUP_TYPE)
+                .setStatusCode(ServerConstant.STATUS_CODE)
+                .setCompany(username)
+                .setMsg(StrUtil.NULL)
+                .setStatusMessage(StrUtil.NULL);
         return vo;
     }
 
@@ -99,8 +112,13 @@ public class LeasesController {
         vo.setServerVersion(ServerConstant.SERVER_VERSION)
                 .setServerProtocolVersion(ServerConstant.SERVER_PROTOCOL_VERSION)
                 .setServerGuid(ServerConstant.SERVER_GUID)
-                .setGroupType(ServerConstant.GROUP_TYPE).setStatusCode(ServerConstant.STATUS_CODE).setCompany(ServerConstant.COMPANY)
-                .setCanGetLease(true).setLicenseType(1).setEvaluationLicense(false).setSeatPoolType(ServerConstant.SEAT_POOL_TYPE);
+                .setGroupType(ServerConstant.GROUP_TYPE)
+                .setStatusCode(ServerConstant.STATUS_CODE)
+                .setCompany(ServerConstant.COMPANY)
+                .setCanGetLease(true)
+                .setLicenseType(1)
+                .setEvaluationLicense(false)
+                .setSeatPoolType(ServerConstant.SEAT_POOL_TYPE);
         return vo;
     }
 }
