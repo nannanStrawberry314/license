@@ -14,5 +14,5 @@ public interface MobaXtermService {
      * @param count 数量
      * @param response 响应
      */
-    void generate(String name, String version, Integer count, HttpServletResponse response);
+    void generate(String name, String version, Integer count, HttpServletResponse response) throws Exception;
 }

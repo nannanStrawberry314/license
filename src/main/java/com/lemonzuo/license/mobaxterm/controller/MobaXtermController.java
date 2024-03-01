@@ -16,6 +16,7 @@ import org.springframework.web.bind.annotation.RestController;
 public class MobaXtermController {
     @Resource
     private MobaXtermService mobaXtermService;
+
     /**
      * 生成license
      * @param name 授权人
@@ -23,7 +24,7 @@ public class MobaXtermController {
      * @param count 数量
      */
     @RequestMapping(value = "/generate", method = {RequestMethod.GET, RequestMethod.POST})
-    public void generate(String name, String version, Integer count, HttpServletResponse response) {
+    public void generate(String name, String version, Integer count, HttpServletResponse response) throws Exception {
         mobaXtermService.generate(name, version, count, response);
     }
 }
