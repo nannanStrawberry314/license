@@ -3,7 +3,7 @@ package com.lemonzuo.license.mobaxterm.generator;
 
 import cn.hutool.core.util.NumberUtil;
 import cn.hutool.core.util.StrUtil;
-import com.lemonzuo.license.mobaxterm.dto.License;
+import com.lemonzuo.license.mobaxterm.domain.License;
 import com.lemonzuo.license.mobaxterm.enums.LicenseEnum;
 import lombok.extern.slf4j.Slf4j;
 

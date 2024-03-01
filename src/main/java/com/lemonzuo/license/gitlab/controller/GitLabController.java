@@ -13,13 +13,13 @@ import org.springframework.web.bind.annotation.RestController;
  * @create 2023-11-03 10:30
  */
 @RestController
-@RequestMapping("/license")
-public class LicenseController {
+@RequestMapping("/gitlab")
+public class GitLabController {
 
     /**
      * 生成license
-     * @param licenseInfo
-     * @param response
+     * @param licenseInfo license信息
+     * @param response response
      */
     @PostMapping("/generate")
     public void generate(LicenseInfo licenseInfo, HttpServletResponse response) {

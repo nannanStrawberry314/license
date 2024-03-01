@@ -1,4 +1,4 @@
-package com.lemonzuo.license.mobaxterm.dto;
+package com.lemonzuo.license.mobaxterm.domain;
 
 import com.lemonzuo.license.mobaxterm.enums.LicenseEnum;
 import lombok.AllArgsConstructor;
