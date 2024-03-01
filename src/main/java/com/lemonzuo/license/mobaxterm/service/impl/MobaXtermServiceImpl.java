@@ -1,17 +1,11 @@
 package com.lemonzuo.license.mobaxterm.service.impl;
 
-import cn.hutool.core.util.NumberUtil;
 import com.lemonzuo.license.mobaxterm.generator.LicenseGenerator;
 import com.lemonzuo.license.mobaxterm.service.MobaXtermService;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.io.ByteArrayOutputStream;
-import java.io.File;
-import java.io.FileOutputStream;
-import java.net.URLEncoder;
-import java.nio.charset.StandardCharsets;
 import java.util.zip.CRC32;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
