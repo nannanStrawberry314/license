@@ -8,9 +8,9 @@
 >
 > 需选择系统架构所对应的安装包
 
-![image-20220820185420765](https://img-file.lemonzuo.com/img/202208201854816.png)
+![image-20220820185420765](./assets/image-202208201854816.png)
 
-![image-20220820185534861](https://img-file.lemonzuo.com/img/202208201855891.png)
+![image-20220820185534861](./assets/image-202208201855891.png)
 
 ## 执行安装
 
@@ -138,7 +138,7 @@ gitlab_rails['db_database'] = "gitlabhq_production"
 
 ## 生成license
 
-> 项目地址: https://git.lemonzuo.com/gitlab/GitLabEnterpriseLicense.git
+> 项目地址: https://github.com/LemonZuo/license.git
 >
 > 生成license接口地址: 
 >
@@ -166,12 +166,12 @@ license.gitlab-license：证书文件
 >
 > 管理员账户登录后上传文件
 >
-> ![image-20220820193204108](https://img-file.lemonzuo.com/img/202208201932152.png)
+> ![image-20220820193204108](./assets/image-202208201932152.png)
 >
-> ![image-20220820193239777](https://img-file.lemonzuo.com/img/202208201932815.png)
+> ![image-20220820193239777](./assets/image-202208201932815.png)
 >
-> ![image-20220820193321086](https://img-file.lemonzuo.com/img/202208201933120.png)
+> ![image-20220820193321086](./assets/image-202208201933120.png)
 >
-> ![image-20220820193401692](https://img-file.lemonzuo.com/img/202208201934727.png)
+> ![image-20220820193401692](./assets/image-202208201934727.png)
 >
-> ![image-20220820193527931](https://img-file.lemonzuo.com/img/202208201935987.png)
+> ![image-20220820193527931](./assets/image-202208201935987.png)
