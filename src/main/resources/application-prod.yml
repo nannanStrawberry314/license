@@ -1,3 +1,0 @@
-spring:
-  datasource:
-    url: jdbc:sqlite:/opt/module/license/db/license.db
