@@ -27,7 +27,10 @@ public class LicensePart {
     private String metadata;
     private String hash;
     private Integer gracePeriodDays;
+    private Boolean autoProlongated;
     private Boolean isAutoProlongated;
+    private Boolean trial;
+    private Boolean aiAllowed;
 
     public LicensePart(String licenseId, String licenseeName, List<String> codes, String date) {
         this.licenseId = licenseId;
@@ -39,9 +42,12 @@ public class LicensePart {
         this.licenseeType = "PERSONAL";
         this.assigneeName = StrUtil.EMPTY;
         this.checkConcurrentUse = false;
-        this.metadata = "0120230914PSAX000005";
-        this.hash = "TRIAL:-1920204289";
+        this.metadata = "0120231106PPAA010009";
+        this.hash = "35658386/0:194532923";
         this.gracePeriodDays = 7;
+        this.autoProlongated = true;
         this.isAutoProlongated = true;
+        this.trial = false;
+        this.aiAllowed = true;
     }
 }
