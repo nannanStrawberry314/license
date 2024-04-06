@@ -37,13 +37,12 @@ public class LicensePart {
         this.licenseeName = licenseeName;
         this.products = codes.stream().map(code -> new Product(code, date)).collect(Collectors.toList());
 
-
         // 一些默认值
         this.licenseeType = "PERSONAL";
         this.assigneeName = StrUtil.EMPTY;
         this.checkConcurrentUse = false;
-        this.metadata = "0120231106PPAA010009";
-        this.hash = "35658386/0:194532923";
+        this.metadata = "0120231110PSAA003008";
+        this.hash = "51149839/0:-1370131430";
         this.gracePeriodDays = 7;
         this.autoProlongated = true;
         this.isAutoProlongated = true;
