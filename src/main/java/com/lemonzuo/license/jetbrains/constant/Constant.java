@@ -1,5 +1,6 @@
 package com.lemonzuo.license.jetbrains.constant;
 
+import cn.hutool.core.io.FileUtil;
 import lombok.extern.slf4j.Slf4j;
 
 /**
@@ -31,6 +32,11 @@ public class Constant {
             } else {
                 PATH = "/opt/module/license/cert";
             }
+        }
+
+        if (!FileUtil.exist(PATH)) {
+            FileUtil.mkdir(PATH);
+            log.info("创建证书存放目录: {}", PATH);
         }
     }
 

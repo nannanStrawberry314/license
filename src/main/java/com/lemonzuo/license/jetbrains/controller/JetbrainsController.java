@@ -2,14 +2,13 @@ package com.lemonzuo.license.jetbrains.controller;
 
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.util.ObjectUtil;
+import com.lemonzuo.license.jetbrains.generator.server.ServerCodePowerConfRuleGenerator;
+import com.lemonzuo.license.jetbrains.generator.server.ServerPowerConfRuleGenerator;
 import com.lemonzuo.license.jetbrains.service.JetbrainsService;
-import com.lemonzuo.license.jetbrains.vo.License;
 import jakarta.annotation.Resource;
+import lombok.SneakyThrows;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.util.Date;
 
@@ -32,7 +31,7 @@ public class JetbrainsController {
      * @return License 证书
      */
     @RequestMapping(value = "/generate", method = {RequestMethod.GET, RequestMethod.POST})
-    public License generate(@RequestParam(required = false, defaultValue = "") String licenseeName,
+    public String generate(@RequestParam(required = false, defaultValue = "") String licenseeName,
                             @RequestParam(required = false, name = "effectiveDate", defaultValue = "") String effectiveDateStr) throws Exception {
         Date effectiveDate = DateUtil.parse(effectiveDateStr);
         if (ObjectUtil.isNotNull(effectiveDate)) {
@@ -41,5 +40,20 @@ public class JetbrainsController {
         }
         return jetbrainsService.generateLicense(licenseeName, effectiveDate);
     }
+
+    /**
+     * 激活服务器配置规则
+     * @return 规则
+     */
+    @GetMapping("/licenseServerRule")
+    @SneakyThrows
+    public String licenseServerRule() {
+        // 生成code的规则
+        String codeRule = ServerCodePowerConfRuleGenerator.standardGenerateRules();
+        // 生成server的规则
+        String serverRule = ServerPowerConfRuleGenerator.standardGenerateRules();
+        return codeRule + "\n\n" + serverRule + "\n";
+    }
+
 
 }

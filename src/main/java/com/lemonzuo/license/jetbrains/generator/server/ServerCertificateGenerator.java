@@ -1,9 +1,13 @@
-package com.lemonzuo.license.jetbrains.online;
+package com.lemonzuo.license.jetbrains.generator.server;
 
 import cn.hutool.core.date.DateField;
 import cn.hutool.core.date.DateTime;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.crypto.PemUtil;
+import com.lemonzuo.license.jetbrains.constant.CertConstant;
+import com.lemonzuo.license.jetbrains.util.X509CertUtils;
+import lombok.SneakyThrows;
+import lombok.extern.slf4j.Slf4j;
 import org.bouncycastle.asn1.ASN1EncodableVector;
 import org.bouncycastle.asn1.ASN1Integer;
 import org.bouncycastle.asn1.DERSequence;
@@ -16,7 +20,6 @@ import org.bouncycastle.cert.jcajce.JcaX509ExtensionUtils;
 import org.bouncycastle.cert.jcajce.JcaX509v3CertificateBuilder;
 import org.bouncycastle.operator.ContentSigner;
 import org.bouncycastle.operator.jcajce.JcaContentSignerBuilder;
-import org.springframework.core.io.ClassPathResource;
 
 import java.io.FileInputStream;
 import java.math.BigInteger;
@@ -26,59 +29,50 @@ import java.security.cert.X509Certificate;
 import java.util.Date;
 
 /**
- * @Author: Crazer
- * @Date: 2024/2/27 14:01
- * @version: 1.0.0
- * @Description: 生成服务器证书
+ * 生成服务器证书
+ *
+ * @author LemonZuo
+ * @create 2024-05-17 00:12
+ * step: 5.生成服务器证书
  */
-public class ServerCertificateGenerator_5 {
-    private static final String JB_CA_CERT_PATH = "/opt/data/idea_data/license/src/main/resources/cert/jb/JBLicenseServersCACert.pem";
+@Slf4j
+public class ServerCertificateGenerator {
 
-    // 第一种方式
-    private static final String CA_CERT0_PATH = "/opt/data/idea_data/license/src/main/resources/cert/ServerCA0.pem";
-    private static final String SERVER_CERT0_PATH = "/opt/data/idea_data/license/src/main/resources/cert/ServerCert0.pem";
+    @SneakyThrows
+    public static void main(String[] args) {
+        generate();
+    }
 
-    // 第二种方式
-    private static final String CA_CERT_PATH = "/opt/data/idea_data/license/src/main/resources/cert/ServerCA.pem";
-    private static final String SERVER_INTERMEDIATE_CERT_PATH = "/opt/data/idea_data/license/src/main/resources/cert/ServerIntermediateCert.pem";
-    private static final String SERVER_CERT_PATH = "/opt/data/idea_data/license/src/main/resources/cert/ServerCert.pem";
-
-
-    public static void main(String[] args) throws Exception {
+    public static void generate() throws Exception {
         // 读取code证书密钥对
-        PrivateKey privateKey2048 = PemUtil.readPemPrivateKey(new ClassPathResource("cert/privateKey2048.pem").getInputStream());
-        PublicKey publicKey2048 = PemUtil.readPemPublicKey(new ClassPathResource("cert/publicKey2048.pem").getInputStream());
+        PrivateKey privateKey2048 = PemUtil.readPemPrivateKey(new FileInputStream(CertConstant.PRIVATE_KEY_2048_PATH));
+        PublicKey publicKey2048 = PemUtil.readPemPublicKey(new FileInputStream(CertConstant.PUBLIC_KEY_2048_PATH));
         // 读取根CA密钥对
-        PrivateKey privateKey4096 = PemUtil.readPemPrivateKey(new ClassPathResource("cert/privateKey4096.pem").getInputStream());
-        PublicKey publicKey4096 = PemUtil.readPemPublicKey(new ClassPathResource("cert/publicKey4096.pem").getInputStream());
+        PrivateKey privateKey4096 = PemUtil.readPemPrivateKey(new FileInputStream(CertConstant.PRIVATE_KEY_4096_PATH));
+        PublicKey publicKey4096 = PemUtil.readPemPublicKey(new FileInputStream(CertConstant.PUBLIC_KEY_4096_PATH));
 
-        System.out.println("========== 生成License Servers CA证书 ==========");
-        byte[] codeCertBytes = PemUtil.readPem(new FileInputStream(JB_CA_CERT_PATH));
+        log.info("========== 生成License Servers CA证书 ==========");
+        byte[] codeCertBytes = PemUtil.readPem(new FileInputStream(CertConstant.JETBRAINS_SERVER_CA_PATH));
         X509Certificate templateCert = X509CertUtils.createCertificate(codeCertBytes);
 
-        String subName = "crazer.lsrv.jetbrains.com";
-        // 第一种方式
-        // 生成License Servers CA证书
-        // generateRootCertificate(templateCert, publicKey4096, privateKey4096, CA_CERT0_PATH);
-        // issueChildCertificate(subName, templateCert, templateCert, publicKey2048, privateKey4096, SERVER_CERT0_PATH, false);
-
+        String subName = "lemon.lsrv.jetbrains.com";
 
         // 第二种方式
         // 1、生成License Servers CA证书
-        System.out.println("========== 1、生成License Servers CA证书 ==========");
-        generateRootCertificate(templateCert, publicKey4096, privateKey4096, CA_CERT_PATH);
+        log.info("========== 1、生成License Servers CA证书 ==========");
+        generateRootCertificate(templateCert, publicKey4096, privateKey4096, CertConstant.SERVER_CA_PATH);
 
         // 2、生成服务器中间证书
-        System.out.println("========== 2、生成服务器中间证书 ==========");
-        X509Certificate myCACert = X509CertUtils.createCertificate(PemUtil.readPem(new FileInputStream(CA_CERT_PATH)));
+        log.info("========== 2、生成服务器中间证书 ==========");
+        X509Certificate myCACert = X509CertUtils.createCertificate(PemUtil.readPem(new FileInputStream(CertConstant.SERVER_CA_PATH)));
         String subNameIntermediate = "lsrv-prod-till-20280326-intermediate";
-        issueChildCertificate(subNameIntermediate, myCACert, templateCert, publicKey2048, privateKey4096, SERVER_INTERMEDIATE_CERT_PATH, true);
+        issueChildCertificate(subNameIntermediate, myCACert, templateCert, publicKey2048, privateKey4096, CertConstant.SERVER_INTERMEDIATE_CERT_PATH, true);
 
         // 3、生成服务器证书
-        System.out.println("========== 3、生成服务器证书 ==========");
-        X509Certificate myIntermediateCert = X509CertUtils.createCertificate(PemUtil.readPem(new FileInputStream(SERVER_INTERMEDIATE_CERT_PATH)));
-        String subNameEntity = "crazer.lsrv.jetbrains.com";
-        issueChildCertificate(subNameEntity, myIntermediateCert, myCACert, publicKey2048, privateKey2048, SERVER_CERT_PATH, false);
+        log.info("========== 3、生成服务器证书 ==========");
+        X509Certificate myIntermediateCert = X509CertUtils.createCertificate(PemUtil.readPem(new FileInputStream(CertConstant.SERVER_INTERMEDIATE_CERT_PATH)));
+        String subNameEntity = "lemon.lsrv.jetbrains.com";
+        issueChildCertificate(subNameEntity, myIntermediateCert, myCACert, publicKey2048, privateKey2048, CertConstant.SERVER_CERT_PATH, false);
     }
 
     /**
@@ -88,7 +82,7 @@ public class ServerCertificateGenerator_5 {
      * @param publicKey    4096位 公钥
      * @param privateKey   4096位 私钥
      * @param certPath     证书路径
-     * @throws Exception
+     * @throws Exception 异常
      */
     public static void generateRootCertificate(X509Certificate templateCert, PublicKey publicKey, PrivateKey privateKey, String certPath) throws Exception {
         X500Name issuerName = new X500Name(templateCert.getIssuerX500Principal().getName());
@@ -124,7 +118,7 @@ public class ServerCertificateGenerator_5 {
      * @param issuerPrivateKey 签发者私钥
      * @param certPath         证书路径
      * @param isIntermediate   是否是中间证书
-     * @throws Exception
+     * @throws Exception 异常
      */
     public static void issueChildCertificate(String subName, X509Certificate issuerCert, X509Certificate templateCert, PublicKey publicKey, PrivateKey issuerPrivateKey, String certPath, boolean isIntermediate) throws Exception {
         // 根证书 签发者

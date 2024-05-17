@@ -1,7 +1,5 @@
 package com.lemonzuo.license.jetbrains.service;
 
-import com.lemonzuo.license.jetbrains.vo.License;
-
 import java.util.Date;
 
 /**
@@ -15,5 +13,5 @@ public interface JetbrainsService {
      * @param effectiveDate 有效日期
      * @return License
      */
-    License generateLicense(String licenseeName, Date effectiveDate) throws Exception;
+    String generateLicense(String licenseeName, Date effectiveDate) throws Exception;
 }

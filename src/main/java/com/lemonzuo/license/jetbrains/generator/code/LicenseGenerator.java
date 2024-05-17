@@ -1,4 +1,4 @@
-package com.lemonzuo.license.jetbrains.generator;
+package com.lemonzuo.license.jetbrains.generator.code;
 
 import cn.hutool.core.codec.Base64;
 import cn.hutool.core.date.DateField;

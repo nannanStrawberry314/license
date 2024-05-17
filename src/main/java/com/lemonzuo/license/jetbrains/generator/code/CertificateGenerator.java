@@ -1,4 +1,4 @@
-package com.lemonzuo.license.jetbrains.generator;
+package com.lemonzuo.license.jetbrains.generator.code;
 
 import cn.hutool.core.date.DateField;
 import cn.hutool.core.date.DateTime;
@@ -55,7 +55,7 @@ public class CertificateGenerator {
         PublicKey publicKey = keyPair.getPublic();
 
         X500Name issuerName = new X500Name("CN=JetProfile CA");
-        X500Name subjectName = new X500Name("CN=Novice-from-2024-01-19");
+        X500Name subjectName = new X500Name("CN=lemon-from-2024-01-19");
         BigInteger serialNumber = BigInteger.valueOf(System.currentTimeMillis());
         DateTime today = DateUtil.beginOfDay(DateUtil.date());
         // Yesterday

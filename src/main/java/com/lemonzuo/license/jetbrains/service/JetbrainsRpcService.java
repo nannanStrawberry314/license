@@ -2,8 +2,10 @@ package com.lemonzuo.license.jetbrains.service;
 
 import cn.hutool.core.util.RandomUtil;
 import com.lemonzuo.license.common.service.RpcService;
-import com.lemonzuo.license.jetbrains.online.LicenseServerUtils;
-import com.lemonzuo.license.jetbrains.online.ObtainTicketResponse;
+import com.lemonzuo.license.jetbrains.util.LicenseServerUtils;
+import com.lemonzuo.license.jetbrains.vo.ObtainTicket;
+import com.lemonzuo.license.jetbrains.vo.Ping;
+import com.lemonzuo.license.jetbrains.vo.ReleaseTicket;
 import org.springframework.stereotype.Service;
 
 /**
@@ -14,15 +16,15 @@ import org.springframework.stereotype.Service;
 public class JetbrainsRpcService implements RpcService {
     @Override
     public String ping(String machineId, String salt) {
-        com.crazer.mjcas.pojo.server.PingResponse response = new com.crazer.mjcas.pojo.server.PingResponse();
+        Ping response = new Ping();
         response.setAction("NONE");
         response.setConfirmationStamp(LicenseServerUtils.getConfirmationStamp(machineId));
         response.setLeaseSignature(LicenseServerUtils.getLeaseSignature());
         response.setMessage("");
         response.setResponseCode("OK");
         response.setSalt(salt);
-        response.setServerLease(LicenseServerUtils.leaseContent);
-        response.setServerUid(LicenseServerUtils.serverUid);
+        response.setServerLease(LicenseServerUtils.LEASE_CONTENT);
+        response.setServerUid(LicenseServerUtils.SERVER_UID);
         response.setValidationDeadlinePeriod("-1");
         response.setValidationPeriod("600000");
 
@@ -31,7 +33,7 @@ public class JetbrainsRpcService implements RpcService {
 
     @Override
     public String obtainTicket(String username, String hostName, String machineId, String salt) {
-        ObtainTicketResponse response = new ObtainTicketResponse();
+        ObtainTicket response = new ObtainTicket();
         response.setAction("NONE");
         response.setConfirmationStamp(LicenseServerUtils.getConfirmationStamp(machineId));
         response.setLeaseSignature(LicenseServerUtils.getLeaseSignature());
@@ -39,12 +41,13 @@ public class JetbrainsRpcService implements RpcService {
         response.setProlongationPeriod("600000");
         response.setResponseCode("OK");
         response.setSalt(salt);
-        response.setServerLease(LicenseServerUtils.leaseContent);
-        response.setServerUid(LicenseServerUtils.serverUid);
+        response.setServerLease(LicenseServerUtils.LEASE_CONTENT);
+        response.setServerUid(LicenseServerUtils.SERVER_UID);
         response.setTicketId(RandomUtil.randomString(10));
         // Personal License
         response.setTicketProperties(String.format("licensee=%s\tlicenseeType=5\tmetadata=0120211231PSAN000005", hostName));
-        // response.setTicketProperties(String.format("licensee=%s\tlicenseeType=5", hostName));// 不显示下面
+        // 不显示下面
+        // response.setTicketProperties(String.format("licensee=%s\tlicenseeType=5", hostName));
         response.setValidationDeadlinePeriod("-1");
         response.setValidationPeriod("600000");
         return LicenseServerUtils.getSignXml(response);
@@ -52,15 +55,15 @@ public class JetbrainsRpcService implements RpcService {
 
     @Override
     public String releaseTicket(String machineId, String salt) {
-        com.crazer.mjcas.pojo.server.ReleaseTicketResponse response = new com.crazer.mjcas.pojo.server.ReleaseTicketResponse();
+        ReleaseTicket response = new ReleaseTicket();
         response.setAction("NONE");
         response.setConfirmationStamp(LicenseServerUtils.getConfirmationStamp(machineId));
         response.setLeaseSignature(LicenseServerUtils.getLeaseSignature());
         response.setMessage("");
         response.setResponseCode("OK");
         response.setSalt(salt);
-        response.setServerLease(LicenseServerUtils.leaseContent);
-        response.setServerUid(LicenseServerUtils.serverUid);
+        response.setServerLease(LicenseServerUtils.LEASE_CONTENT);
+        response.setServerUid(LicenseServerUtils.SERVER_UID);
         response.setValidationDeadlinePeriod("-1");
         response.setValidationPeriod("600000");
 

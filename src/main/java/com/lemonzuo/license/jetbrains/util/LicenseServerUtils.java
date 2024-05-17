@@ -1,18 +1,18 @@
-package com.lemonzuo.license.jetbrains.online;
+package com.lemonzuo.license.jetbrains.util;
 
 import cn.hutool.core.codec.Base64;
 import cn.hutool.crypto.PemUtil;
+import com.lemonzuo.license.jetbrains.constant.CertConstant;
 import lombok.SneakyThrows;
-import org.springframework.core.io.ClassPathResource;
 
 import javax.xml.bind.JAXBContext;
 import javax.xml.bind.Marshaller;
+import java.io.FileInputStream;
 import java.io.InputStream;
 import java.io.StringWriter;
 import java.nio.charset.StandardCharsets;
 import java.security.PrivateKey;
 import java.security.Signature;
-import java.util.concurrent.ThreadLocalRandom;
 
 /**
  * @Author: Crazer
@@ -21,27 +21,27 @@ import java.util.concurrent.ThreadLocalRandom;
  * @Description: TODO
  */
 public class LicenseServerUtils {
-    public static final String serverUid = "crazer";
-    public static final String leaseContent = "4102415999000:" + serverUid;
+    public static final String SERVER_UID = "lemon";
+    public static final String LEASE_CONTENT = "4102415999000:" + SERVER_UID;
 
     public static String getJetBrainsGenCert() {
-        return getCertBase64("cert/CodeCert.pem");
+        return getCertBase64(CertConstant.CODE_CERT_PATH);
     }
 
     public static PrivateKey getJetBrainsPrivateKey() {
-        return getPrivateKey("cert/privateKey2048.pem");
+        return getPrivateKey(CertConstant.PRIVATE_KEY_2048_PATH);
     }
 
     public static String getMyLicenseGenCert() {
-        return getCertBase64("cert/ServerCert.pem");
+        return getCertBase64(CertConstant.SERVER_CERT_PATH);
     }
 
     public static String getMyInLicenseGenCert() {
-        return getCertBase64("cert/ServerIntermediateCert.pem");
+        return getCertBase64(CertConstant.SERVER_INTERMEDIATE_CERT_PATH);
     }
 
     public static PrivateKey getMyLicensePrivateKey() {
-        return getPrivateKey("cert/privateKey2048.pem");
+        return getPrivateKey(CertConstant.PRIVATE_KEY_2048_PATH);
     }
 
 
@@ -53,7 +53,7 @@ public class LicenseServerUtils {
      */
     @SneakyThrows
     public static String getCertBase64(String path) {
-        InputStream is = new ClassPathResource(path).getInputStream();
+        InputStream is = new FileInputStream(path);
         byte[] certBytes = PemUtil.readPem(is);
         return Base64.encode(certBytes);
     }
@@ -66,7 +66,7 @@ public class LicenseServerUtils {
      */
     @SneakyThrows
     public static PrivateKey getPrivateKey(String path) {
-        InputStream is = new ClassPathResource(path).getInputStream();
+        InputStream is = new FileInputStream(path);
         PrivateKey privateKey = PemUtil.readPemPrivateKey(is);
         return privateKey;
     }
@@ -106,7 +106,7 @@ public class LicenseServerUtils {
      * @throws Exception
      */
     public static String getLeaseSignature() {
-        String signature = signContent(leaseContent, getJetBrainsPrivateKey(), "SHA512withRSA");
+        String signature = signContent(LEASE_CONTENT, getJetBrainsPrivateKey(), "SHA512withRSA");
         return "SHA512withRSA-" + signature + "-" + getJetBrainsGenCert();
     }
 

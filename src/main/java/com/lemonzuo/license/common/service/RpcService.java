@@ -1,7 +1,5 @@
 package com.lemonzuo.license.common.service;
 
-import jakarta.servlet.http.HttpServletRequest;
-
 /**
  * @author LemonZuo
  * @create 2024-05-16 23:33

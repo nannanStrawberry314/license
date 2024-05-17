@@ -1,8 +1,8 @@
 package com.lemonzuo.license.jetbrains.service.impl;
 
-import com.lemonzuo.license.jetbrains.generator.CertificateGenerator;
-import com.lemonzuo.license.jetbrains.generator.LicenseGenerator;
-import com.lemonzuo.license.jetbrains.generator.PowerConfRuleGenerator;
+import com.lemonzuo.license.jetbrains.generator.code.CertificateGenerator;
+import com.lemonzuo.license.jetbrains.generator.code.LicenseGenerator;
+import com.lemonzuo.license.jetbrains.generator.code.PowerConfRuleGenerator;
 import com.lemonzuo.license.jetbrains.service.JetbrainsService;
 import com.lemonzuo.license.jetbrains.vo.License;
 import org.springframework.stereotype.Service;
@@ -21,7 +21,7 @@ public class JetbrainsServiceImpl implements JetbrainsService {
      * @return License
      */
     @Override
-    public License generateLicense(String licenseeName, Date effectiveDate) throws Exception {
+    public String generateLicense(String licenseeName, Date effectiveDate) throws Exception {
         // 1. 生成证书和私钥
         CertificateGenerator.generate();
         // 2. 生成证书校验规则
@@ -32,6 +32,19 @@ public class JetbrainsServiceImpl implements JetbrainsService {
         License license = new License();
         license.setPowerConfRule(powerConfRule);
         license.setActivationCode(activationCode);
-        return license;
+
+        StringBuilder result = new StringBuilder();
+        result
+                .append("================== power.conf ==================")
+                .append("\n[Result]")
+                .append("\n; Lemon active by code\n")
+                .append(powerConfRule)
+                .append("\n================== power.conf ==================")
+                .append("\n================== activation code ==================\n")
+                .append(activationCode)
+                .append("\n================== activation code ==================\n");
+        ;
+
+        return result.toString();
     }
 }

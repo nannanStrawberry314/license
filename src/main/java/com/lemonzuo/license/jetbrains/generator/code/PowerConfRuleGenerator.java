@@ -1,4 +1,4 @@
-package com.lemonzuo.license.jetbrains.generator;
+package com.lemonzuo.license.jetbrains.generator.code;
 
 import com.lemonzuo.license.jetbrains.constant.Constant;
 import lombok.extern.slf4j.Slf4j;
