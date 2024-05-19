@@ -5,6 +5,7 @@ import (
 	"license/finalshell"
 	"license/gitlab"
 	"license/jrebel"
+	"license/mobaxterm"
 	"license/rpc/controller"
 )
 
@@ -47,5 +48,12 @@ func SetupRouter(r *gin.Engine) {
 		jrebelAgentGroup.DELETE("/leases/1", jrebelLeasesApi.Leases1Handler)
 		jrebelAgentGroup.POST("/leases", jrebelLeasesApi.LeasesHandler)
 		jrebelAgentGroup.POST("/validate-connection", jrebelLeasesApi.ValidateHandler)
+	}
+
+	// mobaxterm
+	mobaxtermApi := mobaxterm.NewMobaXtermController()
+	mobaxtermGroup := r.Group("/mobaxterm")
+	{
+		mobaxtermGroup.POST("/generate", mobaxtermApi.GenerateLicense)
 	}
 }
