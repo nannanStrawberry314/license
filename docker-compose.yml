@@ -1,6 +1,6 @@
 services:
   license:
-    image: raspberrycheese/license:latest
+    image: raspberrycheese/license:0.4.1
     container_name: license
     restart: unless-stopped
     ports:
