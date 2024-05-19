@@ -6,14 +6,6 @@ import (
 	"github.com/ebfe/keccak"
 )
 
-// Service 定义接口
-type Service interface {
-	GenerateLicense(machineCode string) []string
-}
-
-// ServiceImpl FinalShellServiceImpl 实现接口的结构体
-type ServiceImpl struct{}
-
 func md5Hash(msg string) string {
 	hash := md5.New()
 	hash.Write([]byte(msg))
@@ -29,7 +21,7 @@ func keccak384Hash(msg string) string {
 }
 
 // GenerateLicense 实现接口的方法
-func (f ServiceImpl) GenerateLicense(machineCode string) []string {
+func GenerateLicense(machineCode string) []string {
 	var result []string
 	result = append(result, "版本号 < 3.9.6 高级版: "+md5Hash("61305"+machineCode+"8552"))
 	result = append(result, "版本号 < 3.9.6 专业版: "+md5Hash("2356"+machineCode+"13593"))

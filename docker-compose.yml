@@ -1,0 +1,9 @@
+services:
+  license:
+    image: raspberrycheese/license:latest
+    container_name: license
+    restart: unless-stopped
+    ports:
+      - "13000:13000"
+    environment:
+      - TZ=Asia/Shanghai

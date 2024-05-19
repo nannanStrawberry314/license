@@ -1,3 +1,5 @@
+github.com/Lyafei/go-rsa v0.0.0-20200519074919-6694e0e47bb8 h1:ge3POyssAn0EFO04ye3uOGO45v283jpLPoF3KtCuDno=
+github.com/Lyafei/go-rsa v0.0.0-20200519074919-6694e0e47bb8/go.mod h1:SoS6gpNZbC7llv2Y6f8ByoDk7tY6GB9HEO3jL70CtHM=
 github.com/bytedance/sonic v1.11.6 h1:oUp34TzMlL+OY1OUWxHqsdkgC/Zfc85zGqw9siXjrc0=
 github.com/bytedance/sonic v1.11.6/go.mod h1:LysEHSvpvDySVdC2f87zGWf6CIKJcAvqab1ZaiQtds4=
 github.com/bytedance/sonic/loader v0.1.1 h1:c+e5Pt1k/cy5wMveRDyk2X4B9hF4g7an8N3zCYjJFNM=

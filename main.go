@@ -3,6 +3,7 @@ package main
 import (
 	"github.com/gin-gonic/gin"
 	"license/router"
+	"log"
 )
 
 func main() {
@@ -14,5 +15,11 @@ func main() {
 	router.SetupRouter(r)
 
 	// 启动服务器
-	r.Run(":13000")
+	err := r.Run("0.0.0.0:13000")
+	if err != nil {
+		log.Printf("启动服务器失败: %v", err)
+		return
+	} else {
+		log.Println("服务器已启动 http://0.0.0.0:13000")
+	}
 }
