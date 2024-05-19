@@ -50,7 +50,7 @@ public class LeasesController {
         return Base64.encode(sign.sign(signature.getBytes()));
     }
 
-    @RequestMapping(value = {"/leases", "/leases"})
+    @RequestMapping(value = {"/leases"})
     public JrebelLeasesHandlerVO jrebelLeasesHandler(
             @RequestParam(value = "randomness") String clientRandomness,
             @RequestParam(value = "username") String username,
@@ -92,7 +92,7 @@ public class LeasesController {
         return vo;
     }
 
-    @RequestMapping(value = {"/leases/1", "/leases/1"})
+    @RequestMapping(value = {"/leases/1"})
     public JrebelLeasesOneHandlerVO jrebelLeases1Handler(@RequestParam(value = "username", required = false) String username) {
         JrebelLeasesOneHandlerVO vo = new JrebelLeasesOneHandlerVO();
         vo.setServerVersion(ServerConstant.SERVER_VERSION)
