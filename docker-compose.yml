@@ -4,6 +4,6 @@ services:
     container_name: license
     restart: unless-stopped
     ports:
-      - "13000:13000"
+      - "14000:14000"
     environment:
       - TZ=Asia/Shanghai

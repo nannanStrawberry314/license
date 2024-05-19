@@ -9,7 +9,7 @@ import (
 	gorsa "github.com/Lyafei/go-rsa"
 	"github.com/gin-gonic/gin"
 	"io"
-	"license/common"
+	"license/crypto"
 	"log"
 	"net/http"
 	"os"
@@ -89,7 +89,7 @@ func generateRandomIV() ([]byte, error) {
 
 // Encrypt 封装 Encrypt 方法，使用 AES-CBC 加密和 PKCS7 填充
 func Encrypt(data, key, iv []byte) ([]byte, error) {
-	aesTool := common.AesCbcPkcs7{Key: key, Iv: iv}
+	aesTool := crypto.AesCbcPkcs7{Key: key, Iv: iv}
 	enc, err := aesTool.Encrypt(data)
 	if err != nil {
 		log.Println("Encrypt error:", err)
