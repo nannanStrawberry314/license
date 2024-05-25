@@ -30,3 +30,10 @@ mybatis-plus:
 # 日志配置
 logging:
   config: classpath:logback-config.xml
+
+spring:
+  jackson:
+    date-format: yyyy-MM-dd HH:mm:ss
+    time-zone: GMT+8
+    serialization:
+      write-dates-as-timestamps: false

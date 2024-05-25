@@ -1,10 +1,12 @@
 package com.lemonzuo.license.gitlab.util;
 
+import cn.hutool.core.bean.BeanUtil;
 import cn.hutool.core.codec.Base64;
 import cn.hutool.core.date.DatePattern;
 import cn.hutool.core.date.DateUtil;
 import cn.hutool.core.io.IoUtil;
 import cn.hutool.core.io.resource.ResourceUtil;
+import cn.hutool.core.util.ObjectUtil;
 import cn.hutool.crypto.SecureUtil;
 import cn.hutool.crypto.asymmetric.KeyType;
 import cn.hutool.crypto.asymmetric.RSA;
@@ -15,6 +17,7 @@ import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.lemonzuo.license.gitlab.entity.License;
 import com.lemonzuo.license.gitlab.entity.LicenseInfo;
+import com.lemonzuo.license.gitlab.entity.LicenseInfoParam;
 import com.lemonzuo.license.gitlab.entity.Restriction;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.ServletOutputStream;
@@ -64,26 +67,37 @@ public class LicenseUtil {
     /**
      * 创建证书JSON信息
      *
-     * @param licenseInfo 基础信息
+     * @param param 基础信息
      * @return
      * @throws Exception
      */
-    public static String createLicenseJson(LicenseInfo licenseInfo) throws Exception {
+    public static String createLicenseJson(LicenseInfoParam param) throws Exception {
         License license = new License();
 
         Restriction restriction = new Restriction();
         restriction.setActiveUserCount(10000);
         restriction.setPlan("ultimate");
 
+        LicenseInfo licenseInfo = new LicenseInfo();
+        licenseInfo.setName(param.getName());
+        licenseInfo.setCompany(param.getCompany());
+        licenseInfo.setEmail(param.getEmail());
+
+        Date now = new Date();
+        Date expiration = param.getExpiration();
+        if (ObjectUtil.isNull(expiration) || expiration.before(now)) {
+            expiration = DateUtil.parse("2100-12-31 23:59:59", DatePattern.NORM_DATETIME_PATTERN);
+        }
+
         license.setVersion(1);
         license.setLicense(licenseInfo);
         license.setRestrictions(restriction);
 
-        license.setStartsAt(new Date());
-        license.setExpiresAt(DateUtil.parse("2100-12-31 23:59:59", DatePattern.NORM_DATETIME_PATTERN));
-        license.setNotifyAdminsAt(DateUtil.parse("2100-12-31 23:59:59", DatePattern.NORM_DATETIME_PATTERN));
-        license.setNotifyUsersAt(DateUtil.parse("2100-12-31 23:59:59", DatePattern.NORM_DATETIME_PATTERN));
-        license.setBlockChangesAt(DateUtil.parse("2100-12-31 23:59:59", DatePattern.NORM_DATETIME_PATTERN));
+        license.setStartsAt(now);
+        license.setExpiresAt(expiration);
+        license.setNotifyAdminsAt(expiration);
+        license.setNotifyUsersAt(expiration);
+        license.setBlockChangesAt(expiration);
 
         license.setCloudLicensingEnabled(false);
         license.setOfflineCloudLicensingEnabled(false);
@@ -174,10 +188,10 @@ public class LicenseUtil {
         log.info("result:{}", result);
     }
 
-    private static void createLicense(LicenseInfo licenseInfo, HttpServletResponse response) {
+    private static void createLicense(LicenseInfoParam param, HttpServletResponse response) {
         try {
             // 创建证书所有的json数据
-            String licenseJson = createLicenseJson(licenseInfo);
+            String licenseJson = createLicenseJson(param);
             // 对json数据加密
             String encryptedLicense = encryptLicense(licenseJson);
             // 导出证书压缩包
@@ -223,7 +237,7 @@ public class LicenseUtil {
         IoUtil.close(byteArrayOutputStream);
     }
 
-    public static void generate(LicenseInfo licenseInfo, HttpServletResponse response) {
-        createLicense(licenseInfo, response);
+    public static void generate(LicenseInfoParam param, HttpServletResponse response) {
+        createLicense(param, response);
     }
 }

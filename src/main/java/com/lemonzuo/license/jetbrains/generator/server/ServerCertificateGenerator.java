@@ -57,7 +57,6 @@ public class ServerCertificateGenerator {
 
         String subName = "lemon.lsrv.jetbrains.com";
 
-        // 第二种方式
         // 1、生成License Servers CA证书
         log.info("========== 1、生成License Servers CA证书 ==========");
         generateRootCertificate(templateCert, publicKey4096, privateKey4096, CertConstant.SERVER_CA_PATH);
