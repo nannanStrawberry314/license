@@ -23,3 +23,7 @@ go.work
 .idea/
 *.iml
 .env
+*.key
+*.pem
+*.crt
+*.db

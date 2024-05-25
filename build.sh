@@ -27,7 +27,7 @@ docker buildx use $BUILDER_NAME
 docker buildx inspect --bootstrap
 
 # VERSION
-VERSION=0.4.1
+VERSION=0.6.0
 
 # 使用 Docker Buildx 构建镜像，同时标记为 latest 和 VERSION，支持多架构
 docker buildx build \

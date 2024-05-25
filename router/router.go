@@ -4,6 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"license/finalshell"
 	"license/gitlab"
+	"license/jetbrain/server"
 	"license/jrebel"
 	"license/mobaxterm"
 	"license/rpc/controller"
@@ -55,5 +56,12 @@ func SetupRouter(r *gin.Engine) {
 	mobaxtermGroup := r.Group("/mobaxterm")
 	{
 		mobaxtermGroup.POST("/generate", mobaxtermApi.GenerateLicense)
+	}
+
+	// jetbrains
+	jetbrainsApi := server.NewLicenseServerController()
+	jetbrainsGroup := r.Group("/jetbrains")
+	{
+		jetbrainsGroup.GET("/licenseServerRule", jetbrainsApi.LicenseServerRule)
 	}
 }

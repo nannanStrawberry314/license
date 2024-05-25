@@ -4,7 +4,6 @@ import (
 	"github.com/gin-gonic/gin"
 	"license/rpc/service"
 	"license/rpc/service/impl"
-	"net/http"
 )
 
 type RpcController struct {
@@ -14,8 +13,8 @@ type RpcController struct {
 
 func NewRpcController() *RpcController {
 	return &RpcController{
-		JrebelRpcService: &impl.Service{},
-		// JetbrainsRpcService: jetbrainsService,
+		JrebelRpcService:    &impl.JrebelRpcService{},
+		JetbrainsRpcService: &impl.JetbrainsRpcService{},
 	}
 }
 
@@ -25,32 +24,30 @@ func (c *RpcController) Ping(ctx *gin.Context) {
 	salt := ctx.Query("salt")
 	isJetbrains := machineId != ""
 
-	var result string
 	if isJetbrains {
-		result = c.JetbrainsRpcService.Ping(machineId, salt)
+		c.JetbrainsRpcService.Ping(ctx, machineId, salt)
 	} else {
-		result = c.JrebelRpcService.Ping(machineId, salt)
+		c.JrebelRpcService.Ping(ctx, machineId, salt)
 	}
 
-	ctx.String(http.StatusOK, result)
 }
 
 // ObtainTicket 处理 /rpc/obtainTicket.action 请求
 func (c *RpcController) ObtainTicket(ctx *gin.Context) {
-	username := ctx.DefaultQuery("username", "")
+	username := ctx.DefaultQuery("userName", "")
+	if len(username) == 0 {
+		username = ctx.DefaultQuery("username", "")
+	}
 	hostName := ctx.DefaultQuery("hostName", "")
 	machineId := ctx.DefaultQuery("machineId", "")
 	salt := ctx.Query("salt")
 	isJetbrains := machineId != ""
 
-	var result string
 	if isJetbrains {
-		result = c.JetbrainsRpcService.ObtainTicket(username, hostName, machineId, salt)
+		c.JetbrainsRpcService.ObtainTicket(ctx, username, hostName, machineId, salt)
 	} else {
-		result = c.JrebelRpcService.ObtainTicket(username, hostName, machineId, salt)
+		c.JrebelRpcService.ObtainTicket(ctx, username, hostName, machineId, salt)
 	}
-
-	ctx.String(http.StatusOK, result)
 }
 
 // ReleaseTicket 处理 /rpc/releaseTicket.action 请求
@@ -59,12 +56,9 @@ func (c *RpcController) ReleaseTicket(ctx *gin.Context) {
 	salt := ctx.Query("salt")
 	isJetbrains := machineId != ""
 
-	var result string
 	if isJetbrains {
-		result = c.JetbrainsRpcService.ReleaseTicket(machineId, salt)
+		c.JetbrainsRpcService.ReleaseTicket(ctx, machineId, salt)
 	} else {
-		result = c.JrebelRpcService.ReleaseTicket(machineId, salt)
+		c.JrebelRpcService.ReleaseTicket(ctx, machineId, salt)
 	}
-
-	ctx.String(http.StatusOK, result)
 }

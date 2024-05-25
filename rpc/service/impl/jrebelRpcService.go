@@ -9,16 +9,18 @@ import (
 	"encoding/base64"
 	"encoding/pem"
 	"fmt"
+	"github.com/gin-gonic/gin"
 	"license/rpc/service"
+	"net/http"
 )
 
-// Service represents the JRebel RPC service.
-type Service struct {
+// JrebelRpcService represents the JRebel RPC service.
+type JrebelRpcService struct {
 	PrivateKey *rsa.PrivateKey
 }
 
 // 确保Service实现了common.RpcService接口
-var _ service.RpcService = &Service{}
+var _ service.RpcService = &JrebelRpcService{}
 
 // privateKeyStr contains the RSA private key as a string.
 const privateKeyStr = `
@@ -33,8 +35,8 @@ sNe3NFsw0cUxAQIgGA5n7ZPfdBi3BdM4VeJWb87WrLlkVxPqeDSbcGrCyMkCIFSs
 -----END RSA PRIVATE KEY-----
 `
 
-// NewService initializes a new instance of Service with the private key.
-func NewService() (*Service, error) {
+// NewJrebelRpcService initializes a new instance of Service with the private key.
+func NewJrebelRpcService() (*JrebelRpcService, error) {
 	block, _ := pem.Decode([]byte(privateKeyStr))
 	if block == nil {
 		return nil, fmt.Errorf("failed to parse PEM block containing the key")
@@ -45,13 +47,13 @@ func NewService() (*Service, error) {
 		return nil, err
 	}
 
-	return &Service{
+	return &JrebelRpcService{
 		PrivateKey: privateKey,
 	}, nil
 }
 
 // sign creates a signature for the given content using the private key.
-func (s *Service) sign(content string) (string, error) {
+func (s *JrebelRpcService) sign(content string) (string, error) {
 	hashed := sha256.Sum256([]byte(content))
 	signature, err := rsa.SignPKCS1v15(rand.Reader, s.PrivateKey, crypto.SHA256, hashed[:])
 	if err != nil {
@@ -61,23 +63,23 @@ func (s *Service) sign(content string) (string, error) {
 }
 
 // Ping handles the ping XML request and returns a signed response.
-func (s *Service) Ping(machineId, salt string) string {
+func (s *JrebelRpcService) Ping(ctx *gin.Context, machineId, salt string) {
 	xmlContent := fmt.Sprintf("<PingResponse><message></message><responseCode>OK</responseCode><salt>%s</salt></PingResponse>", salt)
 	xmlSignature, _ := s.sign(xmlContent)
-	return fmt.Sprintf("<!-- %s -->\n%s", xmlSignature, xmlContent)
+	ctx.String(http.StatusOK, fmt.Sprintf("<!-- %s -->\n%s", xmlSignature, xmlContent))
 }
 
 // ObtainTicket handles the ticket obtaining XML request and returns a signed response.
-func (s *Service) ObtainTicket(username, hostName, machineId, salt string) string {
+func (s *JrebelRpcService) ObtainTicket(ctx *gin.Context, username, hostName, machineId, salt string) {
 	prolongationPeriod := "607875500"
 	xmlContent := fmt.Sprintf(`<ObtainTicketResponse><message></message><prolongationPeriod>%s</prolongationPeriod><responseCode>OK</responseCode><salt>%s</salt><ticketId>1</ticketId><ticketProperties>licensee=%s\tlicenseType=0\t</ticketProperties></ObtainTicketResponse>`, prolongationPeriod, salt, username)
 	xmlSignature, _ := s.sign(xmlContent)
-	return fmt.Sprintf("<!-- %s -->\n%s", xmlSignature, xmlContent)
+	ctx.String(http.StatusOK, fmt.Sprintf("<!-- %s -->\n%s", xmlSignature, xmlContent))
 }
 
 // ReleaseTicket handles the ticket release XML request and returns a signed response.
-func (s *Service) ReleaseTicket(machineId, salt string) string {
+func (s *JrebelRpcService) ReleaseTicket(ctx *gin.Context, machineId, salt string) {
 	xmlContent := fmt.Sprintf("<ReleaseTicketResponse><message></message><responseCode>OK</responseCode><salt>%s</salt></ReleaseTicketResponse>", salt)
 	xmlSignature, _ := s.sign(xmlContent)
-	return fmt.Sprintf("<!-- %s -->\n%s", xmlSignature, xmlContent)
+	ctx.String(http.StatusOK, fmt.Sprintf("<!-- %s -->\n%s", xmlSignature, xmlContent))
 }
