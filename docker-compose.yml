@@ -1,9 +1,15 @@
 services:
   license:
-    image: raspberrycheese/license:0.4.1
+    image: raspberrycheese/license:0.7.5
+#    build:
+#        context: .
+#        dockerfile: Dockerfile
     container_name: license
     restart: unless-stopped
     ports:
       - "14000:14000"
     environment:
       - TZ=Asia/Shanghai
+      - HTTP_PORT=14000
+    volumes:
+      - ./compose_data/:/data

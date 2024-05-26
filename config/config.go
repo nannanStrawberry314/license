@@ -2,6 +2,7 @@ package config
 
 import (
 	"fmt"
+	"license/logger"
 	"log"
 	"os"
 	"strconv"
@@ -23,6 +24,9 @@ var globalConfig *Config
 
 // InitConfig 初始化全局配置
 func InitConfig() {
+	if globalConfig != nil {
+		logger.Info("Config is already initialized")
+	}
 	// 加载.env文件
 	err := godotenv.Load()
 	if err != nil {
@@ -75,7 +79,9 @@ func getEnvBool(key string, defaultValue bool) bool {
 // GetConfig 提供全局配置的访问
 func GetConfig() *Config {
 	if globalConfig == nil {
-		log.Fatal("Config is not initialized")
+		logger.Info("Config is not initialized")
+		// 未初始化，执行初始化
+		InitConfig()
 	}
 	return globalConfig
 }

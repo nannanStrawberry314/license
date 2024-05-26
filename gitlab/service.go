@@ -9,6 +9,7 @@ import (
 	gorsa "github.com/Lyafei/go-rsa"
 	"github.com/gin-gonic/gin"
 	"io"
+	"license/config"
 	"license/crypto"
 	"log"
 	"net/http"
@@ -19,15 +20,10 @@ import (
 var privateKey string
 var publicKey string
 
-// init 在初始化阶段加载RSA密钥对
-func init() {
-	loadKeys()
-}
-
-// loadKeys 读取、解码并解析RSA私钥和公钥。
-func loadKeys() {
+// LoadKeys 读取、解码并解析RSA私钥和公钥。
+func LoadKeys() {
 	// 读取公钥
-	publicBytes, err := os.ReadFile("files/.license_encryption_key.pub")
+	publicBytes, err := os.ReadFile(config.GetConfig().DataDir + "/.license_encryption_key.pub")
 	if err != nil {
 		log.Printf("读取公钥文件失败: %v", err)
 		return
@@ -36,7 +32,7 @@ func loadKeys() {
 	publicKey = string(publicBytes)
 
 	// 读取私钥
-	privateBytes, err := os.ReadFile("files/.license_decryption_key.pri")
+	privateBytes, err := os.ReadFile(config.GetConfig().DataDir + "/.license_decryption_key.pri")
 	if err != nil {
 		log.Printf("读取私钥文件失败: %v", err)
 		return
@@ -204,7 +200,7 @@ func exportZipStream(ctx *gin.Context, encryptedLicense string) error {
 	}(zipWriter)
 
 	// 添加公钥文件到ZIP
-	if err := addFileToZip(zipWriter, "files/.license_encryption_key.pub", "license/.license_encryption_key.pub"); err != nil {
+	if err := addFileToZip(zipWriter, config.GetConfig().DataDir+"/.license_encryption_key.pub", "license/.license_encryption_key.pub"); err != nil {
 		return err
 	}
 

@@ -4,13 +4,13 @@ import (
 	"archive/zip"
 	"fmt"
 	"github.com/gin-gonic/gin"
+	"license/config"
 	"log"
 	"strconv"
 	"strings"
 	"time"
 
 	"os"
-	"path"
 )
 
 func GenerateLicense(count int, username, version string, c *gin.Context) {
@@ -44,16 +44,16 @@ func GenerateLicense(count int, username, version string, c *gin.Context) {
 	// 先写入文件，解决直接输出压缩包文件大小不对导致无法使用的问题
 	toFile(license)
 	// 读取文件, 输出到浏览器
-	c.FileAttachment(path.Join("./files/Custom.mxtpro"), "Custom.mxtpro")
+	c.FileAttachment(config.GetConfig().DataDir+"/Custom.mxtpro", "Custom.mxtpro")
 	// 删除文件
-	err := os.Remove(path.Join("./files/Custom.mxtpro"))
+	err := os.Remove(config.GetConfig().DataDir + "/Custom.mxtpro")
 	if err != nil {
 		log.Printf("删除文件失败: %v", err)
 	}
 }
 
 func toFile(license []byte) {
-	fileName := path.Join("./files/Custom.mxtpro")
+	fileName := config.GetConfig().DataDir + "/Custom.mxtpro"
 	_ = os.Remove(fileName)
 	f, err := os.Create(fileName)
 	if err != nil {

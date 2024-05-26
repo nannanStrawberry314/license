@@ -11,6 +11,7 @@ import (
 	"encoding/base64"
 	"encoding/pem"
 	"fmt"
+	"license/config"
 	"license/logger"
 	"math/big"
 	"os"
@@ -19,26 +20,6 @@ import (
 
 var Fake = &FakeCert{
 	ServerUID: "lemon",
-}
-
-// 初始化
-func init() {
-	logger.Info("init fake cert")
-	Fake.loadOrGeneratePrivateKey()
-	err := Fake.loadRootCA()
-	if err != nil {
-		logger.Error("load root ca err %e", err)
-	}
-	err = Fake.generateJetCA()
-	if err != nil {
-		logger.Error("generate jet ca err %e", err)
-	}
-
-	err = Fake.loadMyCA()
-	if err != nil {
-		logger.Error("load my ca err %e", err)
-	}
-	logger.Info("init fake cert done")
 }
 
 // 生成power.conf配置
@@ -94,11 +75,11 @@ func ReadCertFile(filepath string) (*x509.Certificate, error) {
 }
 
 var (
-	JetProfileCAPath    = "cert/jetbrainsCodeCACert.pem"
-	LicenseServerCAPath = "cert/jetbrainsServerCACert.pem"
-	PrivateKeyPath      = "cert/ca.key"
-	JPCAPath            = "cert/jp-ca.crt"
-	LSCAPath            = "cert/ls-ca.crt"
+	JetProfileCAPath    = config.GetConfig().DataDir + "/jetbrainsCodeCACert.pem"
+	LicenseServerCAPath = config.GetConfig().DataDir + "/jetbrainsServerCACert.pem"
+	PrivateKeyPath      = config.GetConfig().DataDir + "/ca.key"
+	JPCAPath            = config.GetConfig().DataDir + "/jp-ca.crt"
+	LSCAPath            = config.GetConfig().DataDir + "/ls-ca.crt"
 )
 
 type FakeCert struct {
@@ -111,7 +92,7 @@ type FakeCert struct {
 	ServerUID string
 }
 
-func (c *FakeCert) loadOrGeneratePrivateKey() {
+func (c *FakeCert) LoadOrGeneratePrivateKey() {
 	var err error
 	pemFile, err := ReadPemFile(PrivateKeyPath)
 	if err != nil {
@@ -132,7 +113,7 @@ func (c *FakeCert) loadOrGeneratePrivateKey() {
 	}
 }
 
-func (c *FakeCert) loadRootCA() (err error) {
+func (c *FakeCert) LoadRootCA() (err error) {
 	c.JetProfileCA, err = ReadCertFile(JetProfileCAPath)
 	if err != nil {
 		return err
@@ -144,7 +125,7 @@ func (c *FakeCert) loadRootCA() (err error) {
 	return
 }
 
-func (c *FakeCert) loadMyCA() (err error) {
+func (c *FakeCert) LoadMyCA() (err error) {
 	c.JpCA, err = ReadCertFile(JPCAPath)
 	if err != nil {
 		return err
@@ -165,7 +146,7 @@ func fileExists(filename string) bool {
 	return err == nil
 }
 
-func (c *FakeCert) generateJetCA() (err error) {
+func (c *FakeCert) GenerateJetCA() (err error) {
 	// 判断文件是否存在，不存在则生成
 	logger.Info("generateJetCA")
 	if !fileExists(JPCAPath) {
@@ -229,17 +210,17 @@ func (c *FakeCert) LsCARawBase64() string {
 }
 
 func (c *FakeCert) Generate() {
-	c.loadOrGeneratePrivateKey()
-	err := c.loadRootCA()
+	c.LoadOrGeneratePrivateKey()
+	err := c.LoadRootCA()
 	if err != nil {
 		panic(err)
 	}
-	err = c.generateJetCA()
+	err = c.GenerateJetCA()
 	if err != nil {
 		panic(err)
 	}
 
-	err = c.loadMyCA()
+	err = c.LoadMyCA()
 	if err != nil {
 		panic(err)
 	}
@@ -247,13 +228,13 @@ func (c *FakeCert) Generate() {
 }
 
 func (c *FakeCert) Load() {
-	c.loadOrGeneratePrivateKey()
-	err := c.loadRootCA()
+	c.LoadOrGeneratePrivateKey()
+	err := c.LoadRootCA()
 	if err != nil {
 		panic(err)
 	}
 
-	err = c.loadMyCA()
+	err = c.LoadMyCA()
 	if err != nil {
 		panic(err)
 	}

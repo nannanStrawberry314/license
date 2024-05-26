@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"license/config"
+	"license/initialize"
 	"license/logger"
 	"license/router"
 )
@@ -11,6 +12,8 @@ import (
 func main() {
 	// 初始化全局配置
 	config.InitConfig()
+	// 初始化
+	initialize.ExecuteInitialize()
 
 	// 初始化数据库
 	config.SetupDatabase()
