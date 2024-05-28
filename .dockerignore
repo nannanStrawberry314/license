@@ -6,3 +6,4 @@
 build.sh
 docker-compose.yml
 Dockerfile
+*.log
