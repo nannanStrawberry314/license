@@ -15,10 +15,7 @@ import cn.hutool.crypto.symmetric.SymmetricAlgorithm;
 import cn.hutool.crypto.symmetric.SymmetricCrypto;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import com.lemonzuo.license.gitlab.entity.License;
-import com.lemonzuo.license.gitlab.entity.LicenseInfo;
-import com.lemonzuo.license.gitlab.entity.LicenseInfoParam;
-import com.lemonzuo.license.gitlab.entity.Restriction;
+import com.lemonzuo.license.gitlab.entity.*;
 import jakarta.annotation.PostConstruct;
 import jakarta.servlet.ServletOutputStream;
 import jakarta.servlet.http.HttpServletResponse;
@@ -28,9 +25,7 @@ import org.springframework.stereotype.Component;
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;
 import java.security.SecureRandom;
-import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
+import java.util.*;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipOutputStream;
 
@@ -74,9 +69,14 @@ public class LicenseUtil {
     public static String createLicenseJson(LicenseInfoParam param) throws Exception {
         License license = new License();
 
+        Integer count = 10000;
+
         Restriction restriction = new Restriction();
-        restriction.setActiveUserCount(10000);
+        restriction.setActiveUserCount(count);
         restriction.setPlan("ultimate");
+
+        // 暂时未生效
+        restriction.setAddOns(Map.of("GitLab_Geo", count));
 
         LicenseInfo licenseInfo = new LicenseInfo();
         licenseInfo.setName(param.getName());
