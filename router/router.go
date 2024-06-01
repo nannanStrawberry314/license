@@ -12,6 +12,15 @@ import (
 )
 
 func SetupRouter(r *gin.Engine) {
+	serverGroup := r.Group("/server")
+	{
+		serverGroup.GET("/status", func(c *gin.Context) {
+			c.JSON(200, gin.H{
+				"status": true,
+			})
+		})
+	}
+
 	// final-shell
 	finalShellApi := api2.NewController()
 	finalShellGroup := r.Group("/final-shell")
