@@ -3,7 +3,7 @@ package entity
 import (
 	"encoding/xml"
 	"fmt"
-	"license/jetbrain/server/util"
+	"license/jetbrain/util"
 	"net/http"
 	"time"
 )
@@ -47,19 +47,19 @@ type TicketResponse struct {
 }
 
 func (t TicketResponse) SignBody(content []byte) []byte {
-	return []byte(fmt.Sprintf("<!-- SHA1withRSA-%s-%s -->", t.fakeCert.SignWithRsaSha1(content), t.fakeCert.LsCARawBase64()))
+	return []byte(fmt.Sprintf("<!-- SHA1withRSA-%s-%s -->", t.fakeCert.SignWithRsaSha1(content), t.fakeCert.ServerCertRawBase64()))
 }
 
 func (t TicketResponse) ConfirmationStamp(machineId string) string {
 	timeStamp := time.Now().UnixMilli()
 	licenseStr := fmt.Sprintf("%d:%s", timeStamp, machineId)
 	signatureBase64 := t.fakeCert.SignWithRsaSha1([]byte(licenseStr))
-	return fmt.Sprintf("%s:SHA1withRSA:%s:%s", licenseStr, signatureBase64, t.fakeCert.LsCARawBase64())
+	return fmt.Sprintf("%s:SHA1withRSA:%s:%s", licenseStr, signatureBase64, t.fakeCert.ServerCertRawBase64())
 }
 
 func (t TicketResponse) leaseSignature(serverLease string) string {
 	leaseSignature := t.fakeCert.SignWithRsaSha512([]byte(serverLease))
-	return fmt.Sprintf("SHA512withRSA-%s-%s", leaseSignature, t.fakeCert.JpCARawBase64())
+	return fmt.Sprintf("SHA512withRSA-%s-%s", leaseSignature, t.fakeCert.CodeCertRawBase64())
 }
 
 type BaseRequest struct {

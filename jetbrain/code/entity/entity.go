@@ -22,3 +22,17 @@ type ProductEntity struct {
 func (ProductEntity) TableName() string {
 	return "sys_jetbrains_product"
 }
+
+type LicensePart struct {
+	LicenseID    string    `json:"licenseId"`
+	LicenseeName string    `json:"licenseeName"`
+	AssigneeName string    `json:"assigneeName"`
+	Products     []Product `json:"products"`
+	Metadata     string    `json:"metadata"`
+}
+
+type Product struct {
+	Code         string `json:"code"`
+	FallbackDate string `json:"fallbackDate"`
+	PaidUpTo     string `json:"paidUpTo"`
+}

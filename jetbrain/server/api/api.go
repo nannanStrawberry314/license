@@ -2,7 +2,7 @@ package api
 
 import (
 	"github.com/gin-gonic/gin"
-	"license/jetbrain/server/util"
+	"license/jetbrain/util"
 )
 
 // Controller 定义控制器结构体
@@ -16,8 +16,8 @@ func NewLicenseServerController() *LicenseServerController {
 
 // LicenseServerRule 生成license的处理函数
 func (controller *LicenseServerController) LicenseServerRule(c *gin.Context) {
-	power1 := util.GeneratePowerResult(util.Fake.JpCA, util.Fake.JetProfileCA)
-	power2 := util.GeneratePowerResult(util.Fake.LsCA, util.Fake.LicenseServerCA)
+	power1 := util.GeneratePowerResult(util.Fake.CodeCert, util.Fake.CodeRootCert)
+	power2 := util.GeneratePowerResult(util.Fake.ServerCert, util.Fake.ServerRootCert)
 	// [Result]
 	// ; Lemon active by code
 	// power1

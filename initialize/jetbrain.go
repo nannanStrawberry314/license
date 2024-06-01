@@ -1,24 +1,24 @@
 package initialize
 
 import (
-	"license/jetbrain/server/util"
+	"license/jetbrain/util"
 	"license/logger"
 )
 
 // 初始化
 func InitJetbrains() {
 	logger.Info("init fake cert")
-	util.Fake.LoadOrGeneratePrivateKey()
-	err := util.Fake.LoadRootCA()
+	util.Fake.LoadOrGenerate()
+	err := util.Fake.LoadRootCert()
 	if err != nil {
 		logger.Error("load root ca err %e", err)
 	}
-	err = util.Fake.GenerateJetCA()
+	err = util.Fake.GenerateRootCert()
 	if err != nil {
 		logger.Error("generate jet ca err %e", err)
 	}
 
-	err = util.Fake.LoadMyCA()
+	err = util.Fake.LoadCert()
 	if err != nil {
 		logger.Error("load my ca err %e", err)
 	}

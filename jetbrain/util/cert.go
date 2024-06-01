@@ -75,24 +75,26 @@ func ReadCertFile(filepath string) (*x509.Certificate, error) {
 }
 
 var (
-	JetProfileCAPath    = config.GetConfig().DataDir + "/jetbrainsCodeCACert.pem"
-	LicenseServerCAPath = config.GetConfig().DataDir + "/jetbrainsServerCACert.pem"
-	PrivateKeyPath      = config.GetConfig().DataDir + "/ca.key"
-	JPCAPath            = config.GetConfig().DataDir + "/jp-ca.crt"
-	LSCAPath            = config.GetConfig().DataDir + "/ls-ca.crt"
+	CodeRootCertPath   = config.GetConfig().DataDir + "/jetbrainsCodeCACert.pem"
+	ServerRootCertPath = config.GetConfig().DataDir + "/jetbrainsServerCACert.pem"
+	PrivateKeyPath     = config.GetConfig().DataDir + "/private.pem"
+	PublicKeyPath      = config.GetConfig().DataDir + "/public.pem"
+	CodeCertPath       = config.GetConfig().DataDir + "/code.pem"
+	ServerCertPath     = config.GetConfig().DataDir + "/server.pem"
 )
 
 type FakeCert struct {
-	JetProfileCA    *x509.Certificate
-	LicenseServerCA *x509.Certificate
-	JpCA            *x509.Certificate
-	LsCA            *x509.Certificate
-	privateKey      *rsa.PrivateKey
+	CodeRootCert   *x509.Certificate
+	ServerRootCert *x509.Certificate
+	CodeCert       *x509.Certificate
+	ServerCert     *x509.Certificate
+	privateKey     *rsa.PrivateKey
+	publicKey      *rsa.PublicKey
 
 	ServerUID string
 }
 
-func (c *FakeCert) LoadOrGeneratePrivateKey() {
+func (c *FakeCert) LoadOrGenerate() {
 	var err error
 	pemFile, err := ReadPemFile(PrivateKeyPath)
 	if err != nil {
@@ -111,26 +113,51 @@ func (c *FakeCert) LoadOrGeneratePrivateKey() {
 			panic(err)
 		}
 	}
+
+	// Load or generate public key
+	pemFile, err = ReadPemFile(PublicKeyPath)
+	if err != nil {
+		fmt.Println("Public key not found, generating new key...")
+		pkixPublicKey, err := x509.MarshalPKIXPublicKey(&c.privateKey.PublicKey)
+		if err != nil {
+			panic(err)
+		}
+		publicKeyPEM := pem.EncodeToMemory(&pem.Block{Type: "PUBLIC KEY", Bytes: pkixPublicKey})
+		if err = os.WriteFile(PublicKeyPath, publicKeyPEM, 0600); err != nil {
+			panic(err)
+		}
+	} else {
+		pub, err := x509.ParsePKIXPublicKey(pemFile)
+		if err != nil {
+			panic(err)
+		}
+		var ok bool
+		c.publicKey, ok = pub.(*rsa.PublicKey)
+		if !ok {
+			panic("not an RSA public key")
+		}
+	}
+
 }
 
-func (c *FakeCert) LoadRootCA() (err error) {
-	c.JetProfileCA, err = ReadCertFile(JetProfileCAPath)
+func (c *FakeCert) LoadRootCert() (err error) {
+	c.CodeRootCert, err = ReadCertFile(CodeRootCertPath)
 	if err != nil {
 		return err
 	}
-	c.LicenseServerCA, err = ReadCertFile(LicenseServerCAPath)
+	c.ServerRootCert, err = ReadCertFile(ServerRootCertPath)
 	if err != nil {
 		return err
 	}
 	return
 }
 
-func (c *FakeCert) LoadMyCA() (err error) {
-	c.JpCA, err = ReadCertFile(JPCAPath)
+func (c *FakeCert) LoadCert() (err error) {
+	c.CodeCert, err = ReadCertFile(CodeCertPath)
 	if err != nil {
 		return err
 	}
-	c.LsCA, err = ReadCertFile(LSCAPath)
+	c.ServerCert, err = ReadCertFile(ServerCertPath)
 	if err != nil {
 		return err
 	}
@@ -146,41 +173,35 @@ func fileExists(filename string) bool {
 	return err == nil
 }
 
-func (c *FakeCert) GenerateJetCA() (err error) {
+func (c *FakeCert) GenerateRootCert() (err error) {
 	// 判断文件是否存在，不存在则生成
-	logger.Info("generateJetCA")
-	if !fileExists(JPCAPath) {
-		jetCert, err := GenerateRootCertificate(c.privateKey, "lemon", c.JetProfileCA.Issuer.CommonName)
+	logger.Info("GenerateCodeCert")
+	if !fileExists(CodeCertPath) {
+		jetCert, err := GenerateRootCertificate(c.privateKey, "lemon", c.CodeRootCert.Issuer.CommonName)
 		if err != nil {
 			return err
 		}
 		jetCertPEM := pem.EncodeToMemory(&pem.Block{Type: "CERTIFICATE", Bytes: jetCert})
-		if err = os.WriteFile(JPCAPath, jetCertPEM, 0600); err != nil {
+		if err = os.WriteFile(CodeCertPath, jetCertPEM, 0600); err != nil {
 			return err
 		}
 	}
-	logger.Info("generateJetCA done")
+	logger.Info("GenerateCodeCert done")
 
-	logger.Info("generateLSCA")
-	if !fileExists(LSCAPath) {
+	logger.Info("GenerateServerCert")
+	if !fileExists(ServerCertPath) {
 		subject := fmt.Sprintf("%s.lsrv.jetbrains.com", "lemon")
-		lsCert, err := GenerateRootCertificate(c.privateKey, subject, c.LicenseServerCA.Issuer.CommonName)
+		lsCert, err := GenerateRootCertificate(c.privateKey, subject, c.ServerRootCert.Issuer.CommonName)
 		if err != nil {
 			return err
 		}
 		lsCertPEM := pem.EncodeToMemory(&pem.Block{Type: "CERTIFICATE", Bytes: lsCert})
-		if err = os.WriteFile(LSCAPath, lsCertPEM, 0600); err != nil {
+		if err = os.WriteFile(ServerCertPath, lsCertPEM, 0600); err != nil {
 			return err
 		}
 	}
-	logger.Info("generateLSCA done")
+	logger.Info("GenerateServerCert done")
 	return nil
-}
-
-func (c *FakeCert) generatePower() {
-	power1 := GeneratePowerResult(c.JpCA, c.JetProfileCA)
-	power2 := GeneratePowerResult(c.LsCA, c.LicenseServerCA)
-	_, _ = fmt.Fprintf(os.Stdout, "[Result]\n%s\n[Result]\n%s\n", power1, power2)
 }
 
 func (c *FakeCert) SignWithRsaSha1(data []byte) string {
@@ -201,43 +222,10 @@ func (c *FakeCert) SignWithRsaSha512(data []byte) string {
 	return base64.StdEncoding.EncodeToString(signature)
 }
 
-func (c *FakeCert) JpCARawBase64() string {
-	return base64.StdEncoding.EncodeToString(c.JpCA.Raw)
+func (c *FakeCert) CodeCertRawBase64() string {
+	return base64.StdEncoding.EncodeToString(c.CodeCert.Raw)
 }
 
-func (c *FakeCert) LsCARawBase64() string {
-	return base64.StdEncoding.EncodeToString(c.LsCA.Raw)
-}
-
-func (c *FakeCert) Generate() {
-	c.LoadOrGeneratePrivateKey()
-	err := c.LoadRootCA()
-	if err != nil {
-		panic(err)
-	}
-	err = c.GenerateJetCA()
-	if err != nil {
-		panic(err)
-	}
-
-	err = c.LoadMyCA()
-	if err != nil {
-		panic(err)
-	}
-	c.generatePower()
-}
-
-func (c *FakeCert) Load() {
-	c.LoadOrGeneratePrivateKey()
-	err := c.LoadRootCA()
-	if err != nil {
-		panic(err)
-	}
-
-	err = c.LoadMyCA()
-	if err != nil {
-		panic(err)
-	}
-
-	c.generatePower()
+func (c *FakeCert) ServerCertRawBase64() string {
+	return base64.StdEncoding.EncodeToString(c.ServerCert.Raw)
 }
