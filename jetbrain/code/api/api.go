@@ -2,7 +2,6 @@ package api
 
 import (
 	"github.com/gin-gonic/gin"
-	"license/jetbrain/code/helper"
 	"license/jetbrain/code/service"
 	"license/jetbrain/util"
 	"license/logger"
@@ -18,7 +17,7 @@ func NewController() *Controller {
 	return &Controller{}
 }
 
-// FetchLatest 用于获取最新的激活码
+// FetchProduceLatest 用于获取最新的激活码
 func (controller *Controller) FetchProduceLatest(c *gin.Context) {
 	productService := service.NewProductService()
 	err := productService.FetchLatest()
@@ -28,6 +27,7 @@ func (controller *Controller) FetchProduceLatest(c *gin.Context) {
 	}
 }
 
+// FetchPluginLatest 用于获取最新的插件
 func (controller *Controller) FetchPluginLatest(c *gin.Context) {
 	pluginService := service.NewPluginService()
 	err := pluginService.FetchLatest()
@@ -37,8 +37,8 @@ func (controller *Controller) FetchPluginLatest(c *gin.Context) {
 	}
 }
 
+// Generate 用于生成激活码
 func (controller *Controller) Generate(c *gin.Context) {
-	// 提取licensesName effectiveDate codes
 	licenseeName := c.Query("licenseeName")
 	effectiveDate := c.Query("effectiveDate")
 	codes := c.Query("codes")
@@ -50,13 +50,12 @@ func (controller *Controller) Generate(c *gin.Context) {
 	}
 
 	// 生成license
-	activationCode, err := helper.GenerateLicense(licenseeName, effectiveDate, codesArray)
+	activationCode, err := service.GenerateLicense(licenseeName, effectiveDate, codesArray)
 	if err != nil {
 		logger.Error("Failed to generate license:", err)
-		c.Data(500, "text/plain", []byte("Failed to generate license"))
+		c.String(500, "Failed to generate license")
 	}
-	// 生成powerconf
-	// utlGeneratePowerResult(license, c)
+	// 生成powerConf
 	powerConfRule := util.GeneratePowerResult(util.Fake.CodeCert, util.Fake.CodeRootCert)
 
 	// 组装数据
@@ -70,5 +69,5 @@ func (controller *Controller) Generate(c *gin.Context) {
 	result.WriteString(activationCode)
 	result.WriteString("\n================== activation code ==================\n")
 
-	c.Data(200, "text/plain", []byte(result.String()))
+	c.String(200, result.String())
 }

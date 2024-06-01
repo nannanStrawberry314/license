@@ -12,10 +12,8 @@ type ProductMapper interface {
 	List() ([]entity.ProductEntity, error)
 }
 
-// GormProductMapper 是 ProductMapper 接口的 GORM 实现
 type GormProductMapper struct{}
 
-// Truncate 用于清空产品表
 func (m *GormProductMapper) Truncate() error {
 	result := config.DB.Exec("DELETE FROM sys_jetbrains_product")
 	if result.Error != nil {
@@ -25,7 +23,6 @@ func (m *GormProductMapper) Truncate() error {
 	return nil
 }
 
-// SaveBatch 用于批量保存产品数据到数据库
 func (m *GormProductMapper) SaveBatch(products []*entity.ProductEntity) error {
 	result := config.DB.CreateInBatches(products, len(products))
 	if result.Error != nil {

@@ -10,7 +10,6 @@ import (
 	"log"
 	"math/rand"
 	"net/http"
-	"sync"
 	"time"
 )
 
@@ -225,13 +224,4 @@ func (s *PluginServiceImpl) FetchLatest() error {
 	}
 
 	return nil
-}
-
-// 线程安全地向插件列表中添加插件
-func (s *PluginServiceImpl) appendPlugins(allPlugins *[]*entity.PluginEntity, plugins []*entity.PluginEntity) {
-	// 加锁以确保并发写入安全
-	var mu sync.Mutex
-	mu.Lock()
-	defer mu.Unlock()
-	*allPlugins = append(*allPlugins, plugins...)
 }

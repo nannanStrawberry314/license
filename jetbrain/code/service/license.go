@@ -1,4 +1,4 @@
-package helper
+package service
 
 import (
 	"crypto"
@@ -7,6 +7,7 @@ import (
 	"crypto/sha1"
 	"encoding/base64"
 	"encoding/json"
+	"license/jetbrain/code/dto"
 	"license/jetbrain/code/mapper"
 	"license/jetbrain/util"
 	"license/logger"
@@ -61,16 +62,16 @@ func GenerateLicense(licenseeName, effectiveDate string, codes []string) (string
 		logger.Error("Failed to generate license ID:", err)
 		return "", err
 	}
-	var products []Product
+	var products []dto.Product
 	for _, code := range codes {
-		products = append(products, Product{
+		products = append(products, dto.Product{
 			Code:         code,
 			FallbackDate: effectiveDate,
 			PaidUpTo:     effectiveDate,
 			Extended:     true,
 		})
 	}
-	licensePart := LicensePart{
+	licensePart := dto.LicensePart{
 		LicenseID:         licenseID,
 		LicenseeName:      licenseeName,
 		Products:          products,

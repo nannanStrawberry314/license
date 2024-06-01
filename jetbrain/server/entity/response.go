@@ -106,7 +106,6 @@ func NewObtainTicketResponse(req *BaseRequest, fakeCert *util.FakeCert) *ObtainT
 		ValidationDeadline: -1,
 		ValidationPeriod:   600000,
 	}
-	// 	licensee=%s	licenseeType=5	metadata=0120211231PSAN000005
 }
 
 type PingResponse struct {

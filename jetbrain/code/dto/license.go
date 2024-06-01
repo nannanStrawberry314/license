@@ -1,4 +1,4 @@
-package helper
+package dto
 
 type LicensePart struct {
 	LicenseID          string    `json:"licenseId"`
