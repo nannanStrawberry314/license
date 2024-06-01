@@ -26,5 +26,7 @@ go.work
 *.key
 *.pem
 *.crt
+*.pub
+*.pri
 *.db
 *.log

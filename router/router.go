@@ -4,6 +4,7 @@ import (
 	"github.com/gin-gonic/gin"
 	"license/finalshell"
 	"license/gitlab"
+	"license/jetbrain/code/api"
 	"license/jetbrain/server"
 	"license/jrebel"
 	"license/mobaxterm"
@@ -59,9 +60,13 @@ func SetupRouter(r *gin.Engine) {
 	}
 
 	// jetbrains
-	jetbrainsApi := server.NewLicenseServerController()
+	jetbrainsServerApi := server.NewLicenseServerController()
+	jetbrainsCodeApi := api.NewController()
+
 	jetbrainsGroup := r.Group("/jetbrains")
 	{
-		jetbrainsGroup.GET("/licenseServerRule", jetbrainsApi.LicenseServerRule)
+		jetbrainsGroup.GET("/licenseServerRule", jetbrainsServerApi.LicenseServerRule)
+		jetbrainsGroup.GET("/product/fetchLatest", jetbrainsCodeApi.FetchProduceLatest)
+		jetbrainsGroup.GET("/plugin/fetchLatest", jetbrainsCodeApi.FetchPluginLatest)
 	}
 }

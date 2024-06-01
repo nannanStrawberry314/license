@@ -4,6 +4,7 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"license/config"
+	"license/cron"
 	"license/initialize"
 	"license/logger"
 	"license/router"
@@ -14,9 +15,10 @@ func main() {
 	config.InitConfig()
 	// 初始化
 	initialize.ExecuteInitialize()
-
 	// 初始化数据库
 	config.SetupDatabase()
+	// 初始化定时任务
+	cron.InitCron()
 
 	// 设置 GIN 路由
 	gin.SetMode(gin.ReleaseMode)

@@ -4,7 +4,7 @@ import (
 	"gorm.io/driver/mysql"
 	"gorm.io/driver/sqlite"
 	"gorm.io/gorm"
-	// "license/jetbrains/code"
+	"license/jetbrain/code/entity"
 	"license/logger"
 )
 
@@ -28,11 +28,11 @@ func SetupDatabase() {
 	}
 
 	// 自动迁移数据库模式
-	// err = DB.AutoMigrate(&code.PluginEntity{}, &code.ProductEntity{})
-	// if err != nil {
-	// 	logger.Error("Failed to migrate database", err)
-	// 	return
-	// }
+	err = DB.AutoMigrate(&entity.PluginEntity{}, &entity.ProductEntity{})
+	if err != nil {
+		logger.Error("Failed to migrate database", err)
+		return
+	}
 
 	logger.Sys("Database Migrated Successfully")
 }
