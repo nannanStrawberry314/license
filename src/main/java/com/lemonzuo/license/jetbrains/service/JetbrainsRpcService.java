@@ -45,7 +45,19 @@ public class JetbrainsRpcService implements RpcService {
         response.setServerUid(LicenseServerUtils.SERVER_UID);
         response.setTicketId(RandomUtil.randomString(10));
         // Personal License
-        response.setTicketProperties(String.format("licensee=%s\tlicenseeType=5\tmetadata=0120211231PSAN000005", hostName));
+        StringBuilder builder = new StringBuilder();
+        builder.append("licensee=").append(hostName).append("\t")
+                .append("licenseeType=PERSONAL\t")
+                .append("assigneeName=\t")
+                .append("metadata=0120231110PSAA003008").append("\t")
+                .append("hash=51149839/0:-1370131430").append("\t")
+                .append("gracePeriodDays=7\t")
+                .append("autoProlongated=true\t")
+                .append("isAutoProlongated=true\t")
+                .append("trial=false");
+
+        // response.setTicketProperties(String.format("licensee=%s\tlicenseeType=5\tmetadata=0120211231PSAN000005", hostName));
+        response.setTicketProperties(builder.toString());
         // 不显示下面
         // response.setTicketProperties(String.format("licensee=%s\tlicenseeType=5", hostName));
         response.setValidationDeadlinePeriod("-1");
