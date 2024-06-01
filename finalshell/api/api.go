@@ -1,7 +1,8 @@
-package finalshell
+package api
 
 import (
 	"github.com/gin-gonic/gin"
+	"license/finalshell/service"
 	"net/http"
 	"strings"
 )
@@ -22,6 +23,6 @@ func (controller *Controller) GenerateLicense(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "machineCode不能为空"})
 		return
 	}
-	licenses := GenerateLicense(machineCode)
+	licenses := service.GenerateLicense(machineCode)
 	c.JSON(http.StatusOK, licenses)
 }

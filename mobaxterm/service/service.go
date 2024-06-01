@@ -1,4 +1,4 @@
-package mobaxterm
+package service
 
 import (
 	"archive/zip"

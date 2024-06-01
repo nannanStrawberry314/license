@@ -1,4 +1,4 @@
-package mobaxterm
+package entity
 
 // LicenseEnum 定义了许可证的类型
 type LicenseEnum int

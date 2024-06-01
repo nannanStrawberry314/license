@@ -1,7 +1,8 @@
-package mobaxterm
+package api
 
 import (
 	"github.com/gin-gonic/gin"
+	"license/mobaxterm/service"
 	"net/http"
 	"strconv"
 )
@@ -35,5 +36,5 @@ func (ctrl *Controller) GenerateLicense(c *gin.Context) {
 		c.JSON(http.StatusBadRequest, gin.H{"error": "Invalid count value"})
 		return
 	}
-	GenerateLicense(count, name, version, c)
+	service.GenerateLicense(count, name, version, c)
 }

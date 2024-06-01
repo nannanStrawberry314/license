@@ -2,25 +2,25 @@ package router
 
 import (
 	"github.com/gin-gonic/gin"
-	"license/finalshell"
-	"license/gitlab"
+	api2 "license/finalshell/api"
+	api3 "license/gitlab/api"
 	"license/jetbrain/code/api"
-	"license/jetbrain/server"
-	"license/jrebel"
-	"license/mobaxterm"
+	api4 "license/jetbrain/server/api"
+	api5 "license/jrebel/api"
+	api6 "license/mobaxterm/api"
 	"license/rpc/controller"
 )
 
 func SetupRouter(r *gin.Engine) {
 	// final-shell
-	finalShellApi := finalshell.NewController()
+	finalShellApi := api2.NewController()
 	finalShellGroup := r.Group("/final-shell")
 	{
 		finalShellGroup.POST("/generateLicense", finalShellApi.GenerateLicense)
 	}
 
 	// gitlab
-	gitlabApi := gitlab.NewController()
+	gitlabApi := api3.NewController()
 	gitlabGroup := r.Group("/gitlab")
 	{
 		gitlabGroup.POST("/generate", gitlabApi.Generate)
@@ -36,8 +36,8 @@ func SetupRouter(r *gin.Engine) {
 	}
 
 	// jrebel
-	jrebelLeasesApi := jrebel.NewLeasesController()
-	jrebelIndexApi := jrebel.NewIndexController()
+	jrebelLeasesApi := api5.NewLeasesController()
+	jrebelIndexApi := api5.NewIndexController()
 	jrebelGroup := r.Group("/jrebel")
 	{
 		jrebelGroup.GET("/", jrebelIndexApi.IndexHandler)
@@ -53,14 +53,14 @@ func SetupRouter(r *gin.Engine) {
 	}
 
 	// mobaxterm
-	mobaxtermApi := mobaxterm.NewMobaXtermController()
+	mobaxtermApi := api6.NewMobaXtermController()
 	mobaxtermGroup := r.Group("/mobaxterm")
 	{
 		mobaxtermGroup.POST("/generate", mobaxtermApi.GenerateLicense)
 	}
 
 	// jetbrains
-	jetbrainsServerApi := server.NewLicenseServerController()
+	jetbrainsServerApi := api4.NewLicenseServerController()
 	jetbrainsCodeApi := api.NewController()
 
 	jetbrainsGroup := r.Group("/jetbrains")

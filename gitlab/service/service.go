@@ -1,4 +1,4 @@
-package gitlab
+package service
 
 import (
 	"archive/zip"
@@ -11,6 +11,7 @@ import (
 	"io"
 	"license/config"
 	"license/crypto"
+	"license/gitlab/entity"
 	"log"
 	"net/http"
 	"os"
@@ -42,25 +43,25 @@ func LoadKeys() {
 }
 
 // createLicenseJson 创建许可证的JSON表示
-func createLicenseJson(licenseInfo LicenseInfo) (string, error) {
+func createLicenseJson(licenseInfo entity.LicenseInfo) (string, error) {
 
 	expirationDate := time.Date(2100, 12, 31, 23, 59, 59, 0, time.UTC)
 
-	license := License{
+	license := entity.License{
 		Version:                      1,
 		License:                      licenseInfo,
-		StartsAt:                     CustomTime{Time: time.Now()},
-		ExpiresAt:                    CustomTime{Time: expirationDate},
-		NotifyAdminsAt:               CustomTime{Time: expirationDate},
-		NotifyUsersAt:                CustomTime{Time: expirationDate},
-		BlockChangesAt:               CustomTime{Time: expirationDate},
+		StartsAt:                     entity.CustomTime{Time: time.Now()},
+		ExpiresAt:                    entity.CustomTime{Time: expirationDate},
+		NotifyAdminsAt:               entity.CustomTime{Time: expirationDate},
+		NotifyUsersAt:                entity.CustomTime{Time: expirationDate},
+		BlockChangesAt:               entity.CustomTime{Time: expirationDate},
 		CloudLicensingEnabled:        false,
 		OfflineCloudLicensingEnabled: false,
 		AutoRenewEnabled:             false,
 		SeatReconciliationEnabled:    false,
 		OperationalMetricsEnabled:    false,
 		GeneratedFromCustomersDot:    false,
-		Restrictions: Restriction{
+		Restrictions: entity.Restriction{
 			ActiveUserCount: 10000,
 			Plan:            "ultimate",
 		},
@@ -154,12 +155,12 @@ func encryptLicense(data string) (string, error) {
 }
 
 // Generate 生成许可证并通过HTTP响应发送
-func Generate(ctx *gin.Context, licenseInfo LicenseInfo) {
+func Generate(ctx *gin.Context, licenseInfo entity.LicenseInfo) {
 	createLicense(ctx, licenseInfo)
 }
 
 // createLicense 创建并发送许可证
-func createLicense(ctx *gin.Context, licenseInfo LicenseInfo) {
+func createLicense(ctx *gin.Context, licenseInfo entity.LicenseInfo) {
 	// 创建许可证的JSON数据
 	licenseJson, err := createLicenseJson(licenseInfo)
 	if err != nil {

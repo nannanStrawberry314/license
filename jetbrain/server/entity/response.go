@@ -1,8 +1,9 @@
-package server
+package entity
 
 import (
 	"encoding/xml"
 	"fmt"
+	"license/jetbrain/server/util"
 	"net/http"
 	"time"
 )
@@ -41,7 +42,7 @@ func NewXMLTicket(data any) XMLTicket {
 }
 
 type TicketResponse struct {
-	fakeCert  *FakeCert
+	fakeCert  *util.FakeCert
 	MachineId string
 }
 
@@ -84,7 +85,7 @@ type ObtainTicketResponse struct {
 	ValidationPeriod   int    `xml:"validationPeriod"`
 }
 
-func NewObtainTicketResponse(req *BaseRequest, fakeCert *FakeCert) *ObtainTicketResponse {
+func NewObtainTicketResponse(req *BaseRequest, fakeCert *util.FakeCert) *ObtainTicketResponse {
 	serverLease := "4102415999000:" + fakeCert.ServerUID
 	ticketId := "12345"
 	ticketResponse := TicketResponse{fakeCert: fakeCert}
@@ -122,7 +123,7 @@ type PingResponse struct {
 	ValidationPeriod   int    `xml:"validationPeriod"`
 }
 
-func NewPingResponse(req *BaseRequest, fakeCert *FakeCert) *PingResponse {
+func NewPingResponse(req *BaseRequest, fakeCert *util.FakeCert) *PingResponse {
 	serverLease := "4102415999000:" + fakeCert.ServerUID
 	ticketResponse := TicketResponse{fakeCert: fakeCert}
 
@@ -155,7 +156,7 @@ type ReleaseTicketResponse struct {
 	ValidationPeriod   int    `xml:"validationPeriod"`
 }
 
-func NewReleaseTicketResponse(req *BaseRequest, fakeCert *FakeCert) *ReleaseTicketResponse {
+func NewReleaseTicketResponse(req *BaseRequest, fakeCert *util.FakeCert) *ReleaseTicketResponse {
 	serverLease := "4102415999000:" + fakeCert.ServerUID
 	ticketResponse := TicketResponse{fakeCert: fakeCert}
 

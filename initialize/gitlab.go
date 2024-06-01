@@ -1,7 +1,9 @@
 package initialize
 
-import "license/gitlab"
+import (
+	"license/gitlab/service"
+)
 
 func InitGitLabCert() {
-	gitlab.LoadKeys()
+	service.LoadKeys()
 }

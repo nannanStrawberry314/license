@@ -2,7 +2,8 @@ package impl
 
 import (
 	"github.com/gin-gonic/gin"
-	"license/jetbrain/server"
+	"license/jetbrain/server/entity"
+	"license/jetbrain/server/util"
 	"license/rpc/service"
 )
 
@@ -15,12 +16,12 @@ var _ service.RpcService = &JetbrainsRpcService{}
 
 // Ping handles the ping XML request and returns a signed response.
 func (s *JetbrainsRpcService) Ping(ctx *gin.Context, machineId, salt string) {
-	pingReq := &server.BaseRequest{
+	pingReq := &entity.BaseRequest{
 		Salt:      salt,
 		MachineId: machineId,
 	}
-	pingResponse := server.NewPingResponse(pingReq, server.Fake)
-	ctx.Render(200, server.NewXMLTicket(pingResponse))
+	pingResponse := entity.NewPingResponse(pingReq, util.Fake)
+	ctx.Render(200, entity.NewXMLTicket(pingResponse))
 }
 
 // ObtainTicket handles the ticket obtaining XML request and returns a signed response.
@@ -28,21 +29,21 @@ func (s *JetbrainsRpcService) ObtainTicket(ctx *gin.Context, username, hostName,
 	if len(username) == 0 {
 		username = hostName
 	}
-	obtainReq := &server.BaseRequest{
+	obtainReq := &entity.BaseRequest{
 		Salt:      salt,
 		UserName:  username,
 		MachineId: machineId,
 	}
-	ticketResponse := server.NewObtainTicketResponse(obtainReq, server.Fake)
-	ctx.Render(200, server.NewXMLTicket(ticketResponse))
+	ticketResponse := entity.NewObtainTicketResponse(obtainReq, util.Fake)
+	ctx.Render(200, entity.NewXMLTicket(ticketResponse))
 }
 
 // ReleaseTicket handles the ticket release XML request and returns a signed response.
 func (s *JetbrainsRpcService) ReleaseTicket(ctx *gin.Context, machineId, salt string) {
-	releaseReq := &server.BaseRequest{
+	releaseReq := &entity.BaseRequest{
 		Salt:      salt,
 		MachineId: machineId,
 	}
-	releaseTicketResponse := server.NewReleaseTicketResponse(releaseReq, server.Fake)
-	ctx.Render(200, server.NewXMLTicket(releaseTicketResponse))
+	releaseTicketResponse := entity.NewReleaseTicketResponse(releaseReq, util.Fake)
+	ctx.Render(200, entity.NewXMLTicket(releaseTicketResponse))
 }

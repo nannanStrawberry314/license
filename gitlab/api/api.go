@@ -1,7 +1,9 @@
-package gitlab
+package api
 
 import (
 	"github.com/gin-gonic/gin"
+	"license/gitlab/entity"
+	"license/gitlab/service"
 )
 
 // Controller 定义控制器结构体
@@ -19,11 +21,11 @@ func (controller *Controller) Generate(ctx *gin.Context) {
 	Name := ctx.PostForm("Name")
 	Email := ctx.PostForm("Email")
 	Company := ctx.PostForm("Company")
-	var license = LicenseInfo{
+	var license = entity.LicenseInfo{
 		Name:    Name,
 		Email:   Email,
 		Company: Company,
 	}
 	// 生成license
-	Generate(ctx, license)
+	service.Generate(ctx, license)
 }

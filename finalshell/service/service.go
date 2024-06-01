@@ -1,4 +1,4 @@
-package finalshell
+package service
 
 import (
 	"crypto/md5"

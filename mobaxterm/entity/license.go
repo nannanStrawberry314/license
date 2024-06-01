@@ -1,4 +1,4 @@
-package mobaxterm
+package entity
 
 import (
 	"fmt"

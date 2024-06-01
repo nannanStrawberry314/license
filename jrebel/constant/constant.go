@@ -1,4 +1,4 @@
-package jrebel
+package constant
 
 // ServerConstant holds various constants related to the server configuration.
 type ServerConstant struct{}

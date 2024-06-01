@@ -1,4 +1,4 @@
-package gitlab
+package entity
 
 import (
 	"fmt"

@@ -1,4 +1,4 @@
-package jrebel
+package vo
 
 // LeasesHandlerVO represents a data structure to handle various details related to JRebel leases.
 type LeasesHandlerVO struct {

@@ -1,4 +1,4 @@
-package jrebel
+package api
 
 import (
 	"crypto"
@@ -10,6 +10,8 @@ import (
 	"encoding/pem"
 	"github.com/gin-gonic/gin"
 	"github.com/google/uuid"
+	"license/jrebel/constant"
+	"license/jrebel/vo"
 	"log"
 	"net/http"
 	"strconv"
@@ -26,7 +28,7 @@ func NewLeasesController() *LeasesController {
 
 // sign creates a digital signature using RSA-SHA1 algorithm.
 func sign(clientRandomness, guid string, offline bool, validFrom, validUntil int64) string {
-	signatureBase := clientRandomness + ";" + SERVER_RANDOMNESS + ";" + guid + ";" + strconv.FormatBool(offline)
+	signatureBase := clientRandomness + ";" + constant.SERVER_RANDOMNESS + ";" + guid + ";" + strconv.FormatBool(offline)
 	if offline {
 		// signatureBase += ";" + strconv.FormatInt(*validFrom, 10) + ";" + strconv.FormatInt(*validUntil, 10)
 		signatureBase += ";" + strconv.FormatInt(validFrom, 10) + ";" + strconv.FormatInt(validUntil, 10)
@@ -34,7 +36,7 @@ func sign(clientRandomness, guid string, offline bool, validFrom, validUntil int
 
 	log.Printf("signature: %s", signatureBase)
 
-	block, _ := pem.Decode([]byte(LEASES_PRIVATE_KEY))
+	block, _ := pem.Decode([]byte(constant.LEASES_PRIVATE_KEY))
 	if block == nil {
 		log.Println("Failed to decode PEM block containing the private key")
 		return ""
@@ -77,18 +79,18 @@ func (controller *LeasesController) LeasesHandler(c *gin.Context) {
 
 	signature := sign(clientRandomness, guid, offline, validFrom, validUntil)
 
-	vo := LeasesHandlerVO{
-		ServerVersion:         SERVER_VERSION,
-		ServerProtocolVersion: SERVER_PROTOCOL_VERSION,
-		ServerGuid:            SERVER_GUID,
-		GroupType:             GROUP_TYPE,
+	vo := vo.LeasesHandlerVO{
+		ServerVersion:         constant.SERVER_VERSION,
+		ServerProtocolVersion: constant.SERVER_PROTOCOL_VERSION,
+		ServerGuid:            constant.SERVER_GUID,
+		GroupType:             constant.GROUP_TYPE,
 		ID:                    1,
 		LicenseType:           1,
 		EvaluationLicense:     false,
 		Signature:             signature,
-		ServerRandomness:      SERVER_RANDOMNESS,
-		SeatPoolType:          SEAT_POOL_TYPE,
-		StatusCode:            STATUS_CODE,
+		ServerRandomness:      constant.SERVER_RANDOMNESS,
+		SeatPoolType:          constant.SEAT_POOL_TYPE,
+		StatusCode:            constant.STATUS_CODE,
 		Offline:               offline,
 		ValidFrom:             validFrom,
 		ValidUntil:            validUntil,
@@ -106,12 +108,12 @@ func (controller *LeasesController) LeasesHandler(c *gin.Context) {
 func (controller *LeasesController) Leases1Handler(c *gin.Context) {
 	username := c.DefaultQuery("username", "")
 
-	vo := LeasesOneHandlerVO{
-		ServerVersion:         SERVER_VERSION,
-		ServerProtocolVersion: SERVER_PROTOCOL_VERSION,
-		ServerGuid:            SERVER_GUID,
-		GroupType:             GROUP_TYPE,
-		StatusCode:            STATUS_CODE,
+	vo := vo.LeasesOneHandlerVO{
+		ServerVersion:         constant.SERVER_VERSION,
+		ServerProtocolVersion: constant.SERVER_PROTOCOL_VERSION,
+		ServerGuid:            constant.SERVER_GUID,
+		GroupType:             constant.GROUP_TYPE,
+		StatusCode:            constant.STATUS_CODE,
 		Company:               username,
 		Msg:                   "",
 		StatusMessage:         "",
@@ -122,17 +124,17 @@ func (controller *LeasesController) Leases1Handler(c *gin.Context) {
 
 // ValidateHandler handles the "/validate-connection" endpoint.
 func (controller *LeasesController) ValidateHandler(c *gin.Context) {
-	vo := ValidateHandlerVO{
-		ServerVersion:         SERVER_VERSION,
-		ServerProtocolVersion: SERVER_PROTOCOL_VERSION,
-		ServerGuid:            SERVER_GUID,
-		GroupType:             GROUP_TYPE,
-		StatusCode:            STATUS_CODE,
-		Company:               COMPANY,
+	vo := vo.ValidateHandlerVO{
+		ServerVersion:         constant.SERVER_VERSION,
+		ServerProtocolVersion: constant.SERVER_PROTOCOL_VERSION,
+		ServerGuid:            constant.SERVER_GUID,
+		GroupType:             constant.GROUP_TYPE,
+		StatusCode:            constant.STATUS_CODE,
+		Company:               constant.COMPANY,
 		CanGetLease:           true,
 		LicenseType:           "1",
 		EvaluationLicense:     false,
-		SeatPoolType:          SEAT_POOL_TYPE,
+		SeatPoolType:          constant.SEAT_POOL_TYPE,
 	}
 
 	c.JSON(http.StatusOK, vo)
