@@ -56,30 +56,26 @@ func (service *ProductServiceImpl) FetchLatest() error {
 		return err
 	}
 
-	var wg sync.WaitGroup
 	productList := make([]*entity.ProductEntity, 0, len(products))
 	for i, product := range products {
-		wg.Add(1)
-		go func(product map[string]interface{}, index int) {
-			defer wg.Done()
-			logger.Info(fmt.Sprintf("Processing product %d/%d", index+1, len(products)))
+		logger.Info(fmt.Sprintf("待处理产品总数:%d,当前正在处理第:%d个", len(products), i+1))
 
-			// 将 product map 转换为 JSON 字符串
-			productJSON, err := json.Marshal(product)
-			if err != nil {
-				log.Printf("Error marshaling product to JSON: %v", err)
-				return // 处理错误，如记录日志或者停止进程
-			}
+		// 将 product map 转换为 JSON 字符串
+		productJSON, err := json.Marshal(product)
+		if err != nil {
+			log.Printf("Error marshaling product to JSON: %v", err)
+			continue
+		}
 
-			productEntity := &entity.ProductEntity{
-				ProductDetail: string(productJSON),
-				ProductCode:   fmt.Sprint(product["code"]),
-				ProductName:   fmt.Sprint(product["name"]),
-			}
-			productList = append(productList, productEntity)
-		}(product, i)
+		productEntity := &entity.ProductEntity{
+			ProductDetail: string(productJSON),
+			ProductCode:   fmt.Sprint(product["code"]),
+			ProductName:   fmt.Sprint(product["name"]),
+		}
+		productList = append(productList, productEntity)
+		// Simulate pause
+		time.Sleep(time.Duration(100+rand.Intn(400)) * time.Millisecond)
 	}
-	wg.Wait()
 
 	if len(productList) > 0 {
 		if err := service.Mapper.Truncate(); err != nil {

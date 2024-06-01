@@ -88,8 +88,8 @@ type FakeCert struct {
 	ServerRootCert *x509.Certificate
 	CodeCert       *x509.Certificate
 	ServerCert     *x509.Certificate
-	privateKey     *rsa.PrivateKey
-	publicKey      *rsa.PublicKey
+	PrivateKey     *rsa.PrivateKey
+	PublicKey      *rsa.PublicKey
 
 	ServerUID string
 }
@@ -98,17 +98,17 @@ func (c *FakeCert) LoadOrGenerate() {
 	var err error
 	pemFile, err := ReadPemFile(PrivateKeyPath)
 	if err != nil {
-		c.privateKey, err = rsa.GenerateKey(rand.Reader, 4096)
+		c.PrivateKey, err = rsa.GenerateKey(rand.Reader, 4096)
 		if err != nil {
 			panic(err)
 		}
-		pkcs1PrivateKey := x509.MarshalPKCS1PrivateKey(c.privateKey)
+		pkcs1PrivateKey := x509.MarshalPKCS1PrivateKey(c.PrivateKey)
 		privateKeyPEM := pem.EncodeToMemory(&pem.Block{Type: "RSA PRIVATE KEY", Bytes: pkcs1PrivateKey})
 		if err = os.WriteFile(PrivateKeyPath, privateKeyPEM, 0600); err != nil {
 			panic(err)
 		}
 	} else {
-		c.privateKey, err = x509.ParsePKCS1PrivateKey(pemFile)
+		c.PrivateKey, err = x509.ParsePKCS1PrivateKey(pemFile)
 		if err != nil {
 			panic(err)
 		}
@@ -118,7 +118,7 @@ func (c *FakeCert) LoadOrGenerate() {
 	pemFile, err = ReadPemFile(PublicKeyPath)
 	if err != nil {
 		fmt.Println("Public key not found, generating new key...")
-		pkixPublicKey, err := x509.MarshalPKIXPublicKey(&c.privateKey.PublicKey)
+		pkixPublicKey, err := x509.MarshalPKIXPublicKey(&c.PrivateKey.PublicKey)
 		if err != nil {
 			panic(err)
 		}
@@ -132,7 +132,7 @@ func (c *FakeCert) LoadOrGenerate() {
 			panic(err)
 		}
 		var ok bool
-		c.publicKey, ok = pub.(*rsa.PublicKey)
+		c.PublicKey, ok = pub.(*rsa.PublicKey)
 		if !ok {
 			panic("not an RSA public key")
 		}
@@ -177,7 +177,7 @@ func (c *FakeCert) GenerateRootCert() (err error) {
 	// 判断文件是否存在，不存在则生成
 	logger.Info("GenerateCodeCert")
 	if !fileExists(CodeCertPath) {
-		jetCert, err := GenerateRootCertificate(c.privateKey, "lemon", c.CodeRootCert.Issuer.CommonName)
+		jetCert, err := GenerateRootCertificate(c.PrivateKey, "lemon", c.CodeRootCert.Issuer.CommonName)
 		if err != nil {
 			return err
 		}
@@ -191,7 +191,7 @@ func (c *FakeCert) GenerateRootCert() (err error) {
 	logger.Info("GenerateServerCert")
 	if !fileExists(ServerCertPath) {
 		subject := fmt.Sprintf("%s.lsrv.jetbrains.com", "lemon")
-		lsCert, err := GenerateRootCertificate(c.privateKey, subject, c.ServerRootCert.Issuer.CommonName)
+		lsCert, err := GenerateRootCertificate(c.PrivateKey, subject, c.ServerRootCert.Issuer.CommonName)
 		if err != nil {
 			return err
 		}
@@ -206,7 +206,7 @@ func (c *FakeCert) GenerateRootCert() (err error) {
 
 func (c *FakeCert) SignWithRsaSha1(data []byte) string {
 	hashed := sha1.Sum(data)
-	signature, err := rsa.SignPKCS1v15(rand.Reader, c.privateKey, crypto.SHA1, hashed[:])
+	signature, err := rsa.SignPKCS1v15(rand.Reader, c.PrivateKey, crypto.SHA1, hashed[:])
 	if err != nil {
 		panic(err)
 	}
@@ -215,7 +215,7 @@ func (c *FakeCert) SignWithRsaSha1(data []byte) string {
 
 func (c *FakeCert) SignWithRsaSha512(data []byte) string {
 	hashed := sha512.Sum512(data)
-	signature, err := rsa.SignPKCS1v15(rand.Reader, c.privateKey, crypto.SHA512, hashed[:])
+	signature, err := rsa.SignPKCS1v15(rand.Reader, c.PrivateKey, crypto.SHA512, hashed[:])
 	if err != nil {
 		panic(err)
 	}

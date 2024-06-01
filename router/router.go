@@ -68,5 +68,6 @@ func SetupRouter(r *gin.Engine) {
 		jetbrainsGroup.GET("/licenseServerRule", jetbrainsServerApi.LicenseServerRule)
 		jetbrainsGroup.GET("/product/fetchLatest", jetbrainsCodeApi.FetchProduceLatest)
 		jetbrainsGroup.GET("/plugin/fetchLatest", jetbrainsCodeApi.FetchPluginLatest)
+		jetbrainsGroup.GET("/generate", jetbrainsCodeApi.Generate)
 	}
 }
