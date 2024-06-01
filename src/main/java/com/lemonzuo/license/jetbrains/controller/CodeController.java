@@ -13,7 +13,7 @@ import java.util.List;
  * @create 2024-02-22 10:58
  */
 @RestController
-@RequestMapping("/code")
+@RequestMapping("/jetbrains/code")
 public class CodeController {
     @Resource
     private CodeService codeService;

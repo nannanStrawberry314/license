@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @create 2024-02-22 10:07
  */
 @RestController
-@RequestMapping("/plugin")
+@RequestMapping("/jetbrains/plugin")
 public class PluginController {
     @Resource
     private PluginService pluginService;

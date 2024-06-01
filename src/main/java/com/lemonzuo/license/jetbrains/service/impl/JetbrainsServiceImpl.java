@@ -43,7 +43,6 @@ public class JetbrainsServiceImpl implements JetbrainsService {
                 .append("\n================== activation code ==================\n")
                 .append(activationCode)
                 .append("\n================== activation code ==================\n");
-        ;
 
         return result.toString();
     }

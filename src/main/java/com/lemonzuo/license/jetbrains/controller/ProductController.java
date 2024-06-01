@@ -11,7 +11,7 @@ import org.springframework.web.bind.annotation.RestController;
  * @create 2024-02-22 10:45
  */
 @RestController
-@RequestMapping("/product")
+@RequestMapping("/jetbrains/product")
 public class ProductController {
     @Resource
     private ProductService productService;
