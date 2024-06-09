@@ -11,7 +11,6 @@ import (
 	"license/jetbrain/code/mapper"
 	"license/jetbrain/util"
 	"license/logger"
-	"log"
 	"time"
 )
 
@@ -102,12 +101,14 @@ func signWithRSA(privateKey *rsa.PrivateKey, data []byte) string {
 	hash := sha1.New()
 	_, err := hash.Write(data)
 	if err != nil {
-		log.Fatalf("哈希计算失败: %v", err)
+		logger.Error("Failed to hash: ", err)
+		return ""
 	}
 	hashed := hash.Sum(nil)
 	sign, err := rsa.SignPKCS1v15(rand.Reader, privateKey, crypto.SHA1, hashed)
 	if err != nil {
-		log.Fatalf("Failed to sign: %v", err)
+		logger.Error("Failed to sign: ", err)
+		return ""
 	}
 	signature := base64.StdEncoding.EncodeToString(sign)
 	return signature

@@ -19,7 +19,7 @@ const (
 type IndexController struct {
 }
 
-// NewLeasesController 创建新的控制器实例
+// NewIndexController 创建新的控制器实例
 func NewIndexController() *IndexController {
 	return &IndexController{}
 }

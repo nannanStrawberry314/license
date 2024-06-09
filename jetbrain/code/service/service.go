@@ -7,7 +7,6 @@ import (
 	"license/jetbrain/code/entity"
 	"license/jetbrain/code/mapper"
 	"license/logger"
-	"log"
 	"math/rand"
 	"net/http"
 	"time"
@@ -62,7 +61,7 @@ func (service *ProductServiceImpl) FetchLatest() error {
 		// 将 product map 转换为 JSON 字符串
 		productJSON, err := json.Marshal(product)
 		if err != nil {
-			log.Printf("Error marshaling product to JSON: %v", err)
+			logger.Error("Error marshaling product to JSON:", err)
 			continue
 		}
 
@@ -197,14 +196,14 @@ func (s *PluginServiceImpl) FetchLatest() error {
 	// 首先获取付费插件
 	paidPlugins, err := s.fetchPlugins(paidPluginsURL)
 	if err != nil {
-		log.Printf("Error fetching paid plugins: %v", err)
+		logger.Error("Error fetching paid plugins:", err)
 		return err
 	}
 
 	// 接着获取免费增值插件
 	freemiumPlugins, err := s.fetchPlugins(freemiumPluginsURL)
 	if err != nil {
-		log.Printf("Error fetching freemium plugins: %v", err)
+		logger.Error("Error fetching freemium plugins:", err)
 		return err
 	}
 

@@ -4,10 +4,8 @@ import (
 	"bytes"
 	"crypto/aes"
 	"crypto/cipher"
-	"crypto/rand"
 	"encoding/base64"
 	"errors"
-	"log"
 )
 
 // AesCbcPkcs7 golang版aes-cbc-pkcs7加密解密base64输入输出
@@ -69,37 +67,4 @@ func (s AesCbcPkcs7) unPad(ciphertext []byte) []byte {
 	// 去掉最后一次的padding
 	unPadding := int(ciphertext[length-1])
 	return ciphertext[:(length - unPadding)]
-}
-
-func main() {
-	// var text = "this is Aes encryption with pkcs7"
-	// aes := AesCbcPkcs7{key: []byte("1111111111111111"), iv: []byte("2222222222222222")}
-	// enc, err := aes.Encrypt([]byte(text))
-	// fmt.Println("enc", enc, err)
-	// dec, err := aes.Decrypt(enc)
-	// fmt.Println("dec", string(dec), err)
-
-	// 生成key
-	key := make([]byte, 32)
-	if _, err := rand.Read(key); err != nil {
-		log.Println("key error:", err)
-	}
-	// 打印base64编码的key
-	log.Println("key:", base64.StdEncoding.EncodeToString(key))
-
-	// 生成iv
-	iv := make([]byte, aes.BlockSize) // AES的块大小固定为16字节
-	if _, err := rand.Read(iv); err != nil {
-		log.Println("iv error:", err)
-	}
-	// 打印base64编码的iv
-	log.Println("iv:", base64.StdEncoding.EncodeToString(iv))
-
-	aes := AesCbcPkcs7{Key: key, Iv: iv}
-	enc, err := aes.Encrypt([]byte("123456"))
-	if err != nil {
-		log.Println("Encrypt error:", err)
-	}
-	log.Println("enc:", enc)
-
 }

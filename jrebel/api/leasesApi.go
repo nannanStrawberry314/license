@@ -79,7 +79,7 @@ func (controller *LeasesController) LeasesHandler(c *gin.Context) {
 
 	signature := sign(clientRandomness, guid, offline, validFrom, validUntil)
 
-	vo := vo.LeasesHandlerVO{
+	leasesHandlerVO := vo.LeasesHandlerVO{
 		ServerVersion:         constant.SERVER_VERSION,
 		ServerProtocolVersion: constant.SERVER_PROTOCOL_VERSION,
 		ServerGuid:            constant.SERVER_GUID,
@@ -101,14 +101,14 @@ func (controller *LeasesController) LeasesHandler(c *gin.Context) {
 		LicenseValidUntil:     1691839999000,
 	}
 
-	c.JSON(http.StatusOK, vo)
+	c.JSON(http.StatusOK, leasesHandlerVO)
 }
 
 // Leases1Handler handles the "/leases/1" endpoint.
 func (controller *LeasesController) Leases1Handler(c *gin.Context) {
 	username := c.DefaultQuery("username", "")
 
-	vo := vo.LeasesOneHandlerVO{
+	leasesOneHandlerVO := vo.LeasesOneHandlerVO{
 		ServerVersion:         constant.SERVER_VERSION,
 		ServerProtocolVersion: constant.SERVER_PROTOCOL_VERSION,
 		ServerGuid:            constant.SERVER_GUID,
@@ -119,12 +119,12 @@ func (controller *LeasesController) Leases1Handler(c *gin.Context) {
 		StatusMessage:         "",
 	}
 
-	c.JSON(http.StatusOK, vo)
+	c.JSON(http.StatusOK, leasesOneHandlerVO)
 }
 
 // ValidateHandler handles the "/validate-connection" endpoint.
 func (controller *LeasesController) ValidateHandler(c *gin.Context) {
-	vo := vo.ValidateHandlerVO{
+	validateHandlerVO := vo.ValidateHandlerVO{
 		ServerVersion:         constant.SERVER_VERSION,
 		ServerProtocolVersion: constant.SERVER_PROTOCOL_VERSION,
 		ServerGuid:            constant.SERVER_GUID,
@@ -137,5 +137,5 @@ func (controller *LeasesController) ValidateHandler(c *gin.Context) {
 		SeatPoolType:          constant.SEAT_POOL_TYPE,
 	}
 
-	c.JSON(http.StatusOK, vo)
+	c.JSON(http.StatusOK, validateHandlerVO)
 }

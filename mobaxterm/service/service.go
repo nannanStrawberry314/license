@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"github.com/gin-gonic/gin"
 	"license/config"
+	"license/logger"
 	"log"
 	"strconv"
 	"strings"
@@ -16,14 +17,13 @@ import (
 func GenerateLicense(count int, username, version string, c *gin.Context) {
 	// 检查参数是否为空或不符合要求
 	if username == "" || version == "" || count <= 0 {
-		// panic("参数错误")
-		log.Printf("参数错误: %s, %s, %d", username, version, count)
+		logger.Error("", fmt.Errorf("参数错误: %s, %s, %d", username, version, count))
 	}
 
 	// 拆分版本号
 	versionArr := strings.Split(version, ".")
 	if len(versionArr) != 2 {
-		log.Printf("版本号格式错误: %s", version)
+		logger.Error("", fmt.Errorf("版本号格式错误: %s", version))
 	}
 
 	// 检查版本号是否为数字
@@ -48,7 +48,7 @@ func GenerateLicense(count int, username, version string, c *gin.Context) {
 	// 删除文件
 	err := os.Remove(config.GetConfig().DataDir + "/Custom.mxtpro")
 	if err != nil {
-		log.Printf("删除文件失败: %v", err)
+		logger.Error("", fmt.Errorf("删除文件失败: %v", err))
 	}
 }
 
@@ -57,13 +57,13 @@ func toFile(license []byte) {
 	_ = os.Remove(fileName)
 	f, err := os.Create(fileName)
 	if err != nil {
-		log.Printf("创建文件失败: %v", err)
+		logger.Error("", fmt.Errorf("创建文件失败: %v", err))
 		return
 	}
 	defer func(f *os.File) {
 		err := f.Close()
 		if err != nil {
-			log.Printf("关闭文件失败: %v", err)
+			logger.Error("", fmt.Errorf("关闭文件失败: %v", err))
 		}
 	}(f)
 
@@ -71,7 +71,7 @@ func toFile(license []byte) {
 	defer func(zipFile *zip.Writer) {
 		err := zipFile.Close()
 		if err != nil {
-			log.Printf("关闭ZIP写入器失败: %v", err)
+			logger.Error("", fmt.Errorf("关闭ZIP写入器失败: %v", err))
 		}
 	}(zipFile)
 	header := &zip.FileHeader{
@@ -84,12 +84,12 @@ func toFile(license []byte) {
 	header.SetModTime(time.Now())
 	proFile, err := zipFile.CreateRaw(header)
 	if err != nil {
-		log.Printf("创建ZIP文件失败: %v", err)
+		logger.Error("", fmt.Errorf("创建ZIP文件失败: %v", err))
 		return
 	}
 	_, err = proFile.Write(license)
 	if err != nil {
-		log.Printf("写入ZIP文件失败: %v", err)
+		logger.Error("", fmt.Errorf("写入ZIP文件失败: %v", err))
 		return
 	}
 	return

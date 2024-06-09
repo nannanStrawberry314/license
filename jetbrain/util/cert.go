@@ -22,7 +22,7 @@ var Fake = &FakeCert{
 	ServerUID: "lemon",
 }
 
-// 生成power.conf配置
+// GeneratePowerResult 生成power.conf配置
 func GeneratePowerResult(cert, rootCA *x509.Certificate) string {
 	x := (&big.Int{}).SetBytes(cert.Signature)
 	z := rootCA.PublicKey.(*rsa.PublicKey).N

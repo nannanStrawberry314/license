@@ -44,22 +44,3 @@ type License struct {
 	GeneratedFromCustomersDot    bool        `json:"generated_from_customers_dot"`
 	Restrictions                 Restriction `json:"restrictions"`
 }
-
-// func (l *License) MarshalJSON() ([]byte, error) {
-// 	type Alias License
-// 	return json.Marshal(&struct {
-// 		*Alias
-// 		StartsAt       string `json:"issued_at"`
-// 		ExpiresAt      string `json:"expires_at"`
-// 		NotifyAdminsAt string `json:"notify_admins_at"`
-// 		NotifyUsersAt  string `json:"notify_users_at"`
-// 		BlockChangesAt string `json:"block_changes_at"`
-// 	}{
-// 		Alias:          (*Alias)(l),
-// 		StartsAt:       l.StartsAt.Format("2006-01-02 15:04:05"),
-// 		ExpiresAt:      l.ExpiresAt.Format("2006-01-02 15:04:05"),
-// 		NotifyAdminsAt: l.NotifyAdminsAt.Format("2006-01-02 15:04:05"),
-// 		NotifyUsersAt:  l.NotifyUsersAt.Format("2006-01-02 15:04:05"),
-// 		BlockChangesAt: l.BlockChangesAt.Format("2006-01-02 15:04:05"),
-// 	})
-// }
