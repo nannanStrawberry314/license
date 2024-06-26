@@ -51,6 +51,9 @@ func SetupRouter(r *gin.Engine) {
 	{
 		jrebelGroup.GET("/", jrebelIndexApi.IndexHandler)
 		jrebelGroup.DELETE("/leases/1", jrebelLeasesApi.Leases1Handler)
+		jrebelGroup.POST("/leases/1", func(c *gin.Context) {
+			c.Status(405)
+		})
 		jrebelGroup.POST("/leases", jrebelLeasesApi.LeasesHandler)
 		jrebelGroup.POST("/validate-connection", jrebelLeasesApi.ValidateHandler)
 		jrebelGroup.POST("/features", jrebelLeasesApi.ValidateHandler)
@@ -59,6 +62,9 @@ func SetupRouter(r *gin.Engine) {
 	jrebelAgentGroup := r.Group("/agent")
 	{
 		jrebelAgentGroup.DELETE("/leases/1", jrebelLeasesApi.Leases1Handler)
+		jrebelAgentGroup.POST("/leases/1", func(c *gin.Context) {
+			c.Status(405)
+		})
 		jrebelAgentGroup.POST("/leases", jrebelLeasesApi.LeasesHandler)
 		jrebelAgentGroup.POST("/validate-connection", jrebelLeasesApi.ValidateHandler)
 		jrebelAgentGroup.POST("/features", jrebelLeasesApi.ValidateHandler)
