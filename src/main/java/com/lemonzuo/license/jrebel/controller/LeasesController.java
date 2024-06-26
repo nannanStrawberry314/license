@@ -13,10 +13,7 @@ import com.lemonzuo.license.jrebel.vo.JrebelLeasesOneHandlerVO;
 import com.lemonzuo.license.jrebel.vo.JrebelValidateHandlerVO;
 import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
 
 import java.io.Writer;
 import java.util.Collections;
@@ -97,7 +94,7 @@ public class LeasesController {
         return vo;
     }
 
-    @PostMapping(value = {"/leases/1"})
+    @DeleteMapping(value = {"/leases/1"})
     public JrebelLeasesOneHandlerVO jrebelLeases1Handler(@RequestParam(value = "username", required = false) String username) {
         JrebelLeasesOneHandlerVO vo = new JrebelLeasesOneHandlerVO();
         vo.setServerVersion(ServerConstant.SERVER_VERSION)
@@ -127,14 +124,8 @@ public class LeasesController {
         return vo;
     }
 
-    @PostMapping(value = {"/features"})
+    @RequestMapping(value = {"/features"}, method = {RequestMethod.GET, RequestMethod.POST})
     public void features(HttpServletResponse response) {
-        response.setContentType(ContentType.TEXT_PLAIN.getValue());
         response.setStatus(HttpServletResponse.SC_NOT_FOUND);
-        try (Writer writer = response.getWriter()) {
-            writer.write("404 page not found");
-        } catch (Exception e) {
-            log.error("features error", e);
-        }
     }
 }
