@@ -108,7 +108,7 @@ public class LeasesController {
         return vo;
     }
 
-    @PostMapping(value = {"/validate-connection"})
+    @RequestMapping(value = {"/validate-connection", "/features"}, method = {RequestMethod.GET, RequestMethod.POST})
     public JrebelValidateHandlerVO jrebelValidateHandler() {
         JrebelValidateHandlerVO vo = new JrebelValidateHandlerVO();
         vo.setServerVersion(ServerConstant.SERVER_VERSION)
@@ -122,10 +122,5 @@ public class LeasesController {
                 .setEvaluationLicense(false)
                 .setSeatPoolType(ServerConstant.SEAT_POOL_TYPE);
         return vo;
-    }
-
-    @RequestMapping(value = {"/features"}, method = {RequestMethod.GET, RequestMethod.POST})
-    public void features(HttpServletResponse response) {
-        response.setStatus(HttpServletResponse.SC_NOT_FOUND);
     }
 }
