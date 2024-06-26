@@ -6,15 +6,19 @@ import cn.hutool.core.util.StrUtil;
 import cn.hutool.crypto.SecureUtil;
 import cn.hutool.crypto.asymmetric.Sign;
 import cn.hutool.crypto.asymmetric.SignAlgorithm;
+import cn.hutool.http.ContentType;
 import com.lemonzuo.license.jrebel.constant.ServerConstant;
 import com.lemonzuo.license.jrebel.vo.JrebelLeasesHandlerVO;
 import com.lemonzuo.license.jrebel.vo.JrebelLeasesOneHandlerVO;
 import com.lemonzuo.license.jrebel.vo.JrebelValidateHandlerVO;
+import jakarta.servlet.http.HttpServletResponse;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+import java.io.Writer;
 import java.util.Collections;
 
 /**
@@ -50,15 +54,16 @@ public class LeasesController {
         return Base64.encode(sign.sign(signature.getBytes()));
     }
 
-    @RequestMapping(value = {"/leases"})
+    @PostMapping(value = {"/leases"})
     public JrebelLeasesHandlerVO jrebelLeasesHandler(
             @RequestParam(value = "randomness") String clientRandomness,
             @RequestParam(value = "username") String username,
             @RequestParam(value = "guid") String guid,
             @RequestParam(value = "offline", required = false) boolean offline,
             @RequestParam(value = "clientTime", required = false) Long clientTime) {
-        Long validFrom = null;
-        Long validUntil = null;
+        log.info("clientRandomness: {}, username: {}, guid: {}, offline: {}, clientTime: {}", clientRandomness, username, guid, offline, clientTime);
+        long validFrom = 0L;
+        long validUntil = 0L;
         if (offline) {
             long clientTimeUntil = clientTime + 180L * 24 * 60 * 60 * 1000;
             validFrom = clientTime;
@@ -83,7 +88,7 @@ public class LeasesController {
                 .setOffline(offline)
                 .setValidFrom(validFrom)
                 .setValidUntil(validUntil)
-                .setOrderId(IdUtil.getSnowflakeNextIdStr())
+                .setOrderId(IdUtil.fastUUID())
                 .setZeroIds(Collections.emptyList());
 
         String signature = sign(clientRandomness, guid, offline, validFrom, validUntil);
@@ -92,7 +97,7 @@ public class LeasesController {
         return vo;
     }
 
-    @RequestMapping(value = {"/leases/1"})
+    @PostMapping(value = {"/leases/1"})
     public JrebelLeasesOneHandlerVO jrebelLeases1Handler(@RequestParam(value = "username", required = false) String username) {
         JrebelLeasesOneHandlerVO vo = new JrebelLeasesOneHandlerVO();
         vo.setServerVersion(ServerConstant.SERVER_VERSION)
@@ -106,7 +111,7 @@ public class LeasesController {
         return vo;
     }
 
-    @RequestMapping(value = {"/validate-connection"})
+    @PostMapping(value = {"/validate-connection"})
     public JrebelValidateHandlerVO jrebelValidateHandler() {
         JrebelValidateHandlerVO vo = new JrebelValidateHandlerVO();
         vo.setServerVersion(ServerConstant.SERVER_VERSION)
@@ -120,5 +125,16 @@ public class LeasesController {
                 .setEvaluationLicense(false)
                 .setSeatPoolType(ServerConstant.SEAT_POOL_TYPE);
         return vo;
+    }
+
+    @PostMapping(value = {"/features"})
+    public void features(HttpServletResponse response) {
+        response.setContentType(ContentType.TEXT_PLAIN.getValue());
+        response.setStatus(HttpServletResponse.SC_NOT_FOUND);
+        try (Writer writer = response.getWriter()) {
+            writer.write("404 page not found");
+        } catch (Exception e) {
+            log.error("features error", e);
+        }
     }
 }
