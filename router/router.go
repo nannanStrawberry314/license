@@ -53,12 +53,16 @@ func SetupRouter(r *gin.Engine) {
 		jrebelGroup.DELETE("/leases/1", jrebelLeasesApi.Leases1Handler)
 		jrebelGroup.POST("/leases", jrebelLeasesApi.LeasesHandler)
 		jrebelGroup.POST("/validate-connection", jrebelLeasesApi.ValidateHandler)
+		jrebelGroup.POST("/features", jrebelLeasesApi.ValidateHandler)
+		jrebelGroup.GET("/features", jrebelLeasesApi.ValidateHandler)
 	}
 	jrebelAgentGroup := r.Group("/agent")
 	{
 		jrebelAgentGroup.DELETE("/leases/1", jrebelLeasesApi.Leases1Handler)
 		jrebelAgentGroup.POST("/leases", jrebelLeasesApi.LeasesHandler)
 		jrebelAgentGroup.POST("/validate-connection", jrebelLeasesApi.ValidateHandler)
+		jrebelAgentGroup.POST("/features", jrebelLeasesApi.ValidateHandler)
+		jrebelAgentGroup.GET("/features", jrebelLeasesApi.ValidateHandler)
 	}
 
 	// mobaxterm
