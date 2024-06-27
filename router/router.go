@@ -2,13 +2,13 @@ package router
 
 import (
 	"github.com/gin-gonic/gin"
-	api2 "license/finalshell/api"
-	api3 "license/gitlab/api"
-	"license/jetbrain/code/api"
-	api4 "license/jetbrain/server/api"
-	api5 "license/jrebel/api"
-	api6 "license/mobaxterm/api"
-	"license/rpc/controller"
+	finalshell "license/finalshell/api"
+	gitlab "license/gitlab/api"
+	jetbrainCode "license/jetbrain/code/api"
+	jetbrainServer "license/jetbrain/server/api"
+	jrebel "license/jrebel/api"
+	mobaxterm "license/mobaxterm/api"
+	rpc "license/rpc/controller"
 )
 
 func SetupRouter(r *gin.Engine) {
@@ -22,21 +22,21 @@ func SetupRouter(r *gin.Engine) {
 	}
 
 	// final-shell
-	finalShellApi := api2.NewController()
+	finalShellApi := finalshell.NewController()
 	finalShellGroup := r.Group("/final-shell")
 	{
 		finalShellGroup.POST("/generateLicense", finalShellApi.GenerateLicense)
 	}
 
 	// gitlab
-	gitlabApi := api3.NewController()
+	gitlabApi := gitlab.NewController()
 	gitlabGroup := r.Group("/gitlab")
 	{
 		gitlabGroup.POST("/generate", gitlabApi.Generate)
 	}
 
 	// rpc
-	rpcApi := controller.NewRpcController()
+	rpcApi := rpc.NewRpcController()
 	rpcGroup := r.Group("/rpc")
 	{
 		rpcGroup.GET("/ping.action", rpcApi.Ping)
@@ -45,8 +45,8 @@ func SetupRouter(r *gin.Engine) {
 	}
 
 	// jrebel
-	jrebelLeasesApi := api5.NewLeasesController()
-	jrebelIndexApi := api5.NewIndexController()
+	jrebelLeasesApi := jrebel.NewLeasesController()
+	jrebelIndexApi := jrebel.NewIndexController()
 	jrebelGroup := r.Group("/jrebel")
 	{
 		jrebelGroup.GET("/", jrebelIndexApi.IndexHandler)
@@ -72,15 +72,15 @@ func SetupRouter(r *gin.Engine) {
 	}
 
 	// mobaxterm
-	mobaxtermApi := api6.NewMobaXtermController()
+	mobaxtermApi := mobaxterm.NewMobaXtermController()
 	mobaxtermGroup := r.Group("/mobaxterm")
 	{
 		mobaxtermGroup.POST("/generate", mobaxtermApi.GenerateLicense)
 	}
 
 	// jetbrains
-	jetbrainsServerApi := api4.NewLicenseServerController()
-	jetbrainsCodeApi := api.NewController()
+	jetbrainsServerApi := jetbrainServer.NewLicenseServerController()
+	jetbrainsCodeApi := jetbrainCode.NewController()
 
 	jetbrainsGroup := r.Group("/jetbrains")
 	{
