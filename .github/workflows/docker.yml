@@ -26,7 +26,7 @@ jobs:
           file: ./Dockerfile
           push: true
           tags: |
-            ${{ secrets.HUB_USER }}/${{ secrets.HUB_REPO }}:latest
             ${{ secrets.HUB_USER }}/${{ secrets.HUB_REPO }}:${{ vars.VERSION }}
+            ${{ secrets.HUB_USER }}/${{ secrets.HUB_REPO }}:latest
           platforms: linux/amd64, linux/arm64
 
