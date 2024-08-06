@@ -16,6 +16,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -27,12 +29,24 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class ProductServiceImpl extends ServiceImpl<ProductMapper, ProductEntity> implements ProductService {
     @Resource
     private ObjectMapper mapper;
+    private static final ExecutorService EXECUTOR = Executors.newFixedThreadPool(1);
     /**
      * 查询最新的产品信息
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void fetchLatest() throws Exception {
+    public void fetchLatest() {
+        EXECUTOR.submit(() -> {
+            try {
+                this.executeFetchLatest();
+            } catch (Exception e) {
+                log.error("获取产品信息失败", e);
+            }
+        });
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void executeFetchLatest() throws Exception {
         HttpResponse response = HttpRequest
                 .get("https://data.services.jetbrains.com/products")
                 .header("User-Agent", "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/58.0.3029.110 Safari/537.3")

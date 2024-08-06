@@ -16,6 +16,8 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 import java.util.concurrent.atomic.AtomicInteger;
 
 /**
@@ -27,6 +29,7 @@ import java.util.concurrent.atomic.AtomicInteger;
 public class PluginServiceImpl extends ServiceImpl<PluginMapper, PluginEntity> implements PluginService {
     @Resource
     private ObjectMapper mapper;
+    private static final ExecutorService EXECUTOR = Executors.newFixedThreadPool(1);
 
     /**
      * 获取付费插件信息
@@ -95,12 +98,22 @@ public class PluginServiceImpl extends ServiceImpl<PluginMapper, PluginEntity> i
     /**
      * 查询jetbrains付费插件信息
      *
-     * @throws Exception 异常
      */
     @Override
     @Transactional(rollbackFor = Exception.class)
-    public void fetchLatest() throws Exception {
+    public void fetchLatest() {
+        EXECUTOR.submit(() -> {
+            try {
+                this.executeFetchLatest();
+            } catch (Exception e) {
+                log.error("获取插件信息失败", e);
+            }
+        });
 
+    }
+
+    @Transactional(rollbackFor = Exception.class)
+    public void executeFetchLatest() throws Exception {
         List<PluginEntity> list = new ArrayList<>();
 
         list.addAll(fetchPaidPlugins(PAID_PLUGINS_URL));
