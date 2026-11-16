@@ -107,6 +107,44 @@ func NewObtainTicketResponse(req *BaseRequest, fakeCert *FakeCert) *ObtainTicket
 	}
 }
 
+type ProlongTicketResponse struct {
+	TicketResponse     `xml:"-"`
+	Action             string `xml:"action"`
+	ConfirmationStamp  string `xml:"confirmationStamp"`
+	LeaseSignature     string `xml:"leaseSignature"`
+	Message            string `xml:"message"`
+	ResponseCode       string `xml:"responseCode"`
+	Salt               string `xml:"salt"`
+	ServerLease        string `xml:"serverLease"`
+	ServerUid          string `xml:"serverUid"`
+	TicketID           string `xml:"ticketId"`
+	ValidationDeadline int    `xml:"validationDeadlinePeriod"`
+	ValidationPeriod   int    `xml:"validationPeriod"`
+}
+
+func NewProlongTicketResponse(req *BaseRequest, ticketID string, fakeCert *FakeCert) *ProlongTicketResponse {
+	serverLease := "4102415999000:" + fakeCert.ServerUID
+	if ticketID == "" {
+		ticketID = "12345"
+	}
+	ticketResponse := TicketResponse{fakeCert: fakeCert}
+
+	return &ProlongTicketResponse{
+		TicketResponse:     ticketResponse,
+		Action:             "NONE",
+		ConfirmationStamp:  ticketResponse.ConfirmationStamp(req.MachineId),
+		LeaseSignature:     ticketResponse.leaseSignature(serverLease),
+		Message:            "",
+		ResponseCode:       "OK",
+		Salt:               req.Salt,
+		ServerLease:        serverLease,
+		ServerUid:          fakeCert.ServerUID,
+		TicketID:           ticketID,
+		ValidationDeadline: -1,
+		ValidationPeriod:   600000,
+	}
+}
+
 type PingResponse struct {
 	TicketResponse     `xml:"-"`
 	Action             string `xml:"action"`

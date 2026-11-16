@@ -29,6 +29,7 @@ func SetupExternalRoutes(r *gin.RouterGroup) {
 	{
 		rpcGroup.GET("/ping.action", rpcApi.Ping)
 		rpcGroup.GET("/obtainTicket.action", rpcApi.ObtainTicket)
+		rpcGroup.GET("/prolongTicket.action", rpcApi.ProlongTicket)
 		rpcGroup.GET("/releaseTicket.action", rpcApi.ReleaseTicket)
 	}
 

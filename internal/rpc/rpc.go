@@ -50,6 +50,19 @@ func (c *Controller) ObtainTicket(ctx *gin.Context) {
 	jrebelObtainTicket(ctx, username, salt)
 }
 
+// ProlongTicket handles /rpc/prolongTicket.action.
+func (c *Controller) ProlongTicket(ctx *gin.Context) {
+	machineID := ctx.DefaultQuery("machineId", "")
+	salt := ctx.Query("salt")
+	ticketID := ctx.DefaultQuery("ticketId", "")
+
+	if machineID == "" {
+		ctx.AbortWithStatus(400)
+		return
+	}
+	jetbrainsProlongTicket(ctx, machineID, salt, ticketID)
+}
+
 // ReleaseTicket handles /rpc/releaseTicket.action.
 func (c *Controller) ReleaseTicket(ctx *gin.Context) {
 	machineID := ctx.DefaultQuery("machineId", "")
@@ -73,6 +86,11 @@ func jetbrainsObtainTicket(ctx *gin.Context, username, hostName, machineID, salt
 	}
 	req := &jetbrains.BaseRequest{Salt: salt, UserName: username, MachineId: machineID}
 	ctx.Render(200, jetbrains.NewXMLTicket(jetbrains.NewObtainTicketResponse(req, jetbrains.GetFake())))
+}
+
+func jetbrainsProlongTicket(ctx *gin.Context, machineID, salt, ticketID string) {
+	req := &jetbrains.BaseRequest{Salt: salt, MachineId: machineID}
+	ctx.Render(200, jetbrains.NewXMLTicket(jetbrains.NewProlongTicketResponse(req, ticketID, jetbrains.GetFake())))
 }
 
 func jetbrainsReleaseTicket(ctx *gin.Context, machineID, salt string) {
